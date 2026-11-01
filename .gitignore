@@ -1,0 +1,21 @@
+# Installed dependencies and generated worker bundle
+node_modules/
+/scripts/pilot/worker.bundle.mjs
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Local run artifacts and runtime caches (keep the checked-in pilot report)
+/docs-check-runs/
+/evaluation/runs/
+/artifacts/
+.cache/
+*.qcow2
+
+# Local credentials and environment secrets
+.env
+.env.*
+!.env.example
+auth.json
+credentials.json

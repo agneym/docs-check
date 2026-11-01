@@ -1,0 +1,29 @@
+{
+  "phase": "pilot",
+  "question_ids": ["nextjs-02", "tanstack-06"],
+  "workflows": ["parallel", "context7"],
+  "repeats": 1,
+  "planned_workflow_executions": 4,
+  "answering_model": {
+    "provider": "openai-codex",
+    "id": "gpt-6.1-terra",
+    "reasoning_effort": "medium"
+  },
+  "parallel": {
+    "transport": "direct-task-api",
+    "processor": "core-fast",
+    "task_spec_path": "evaluation/parallel-task-spec.json"
+  },
+  "spending": {
+    "policy": "uncapped-pilot-explicitly-approved",
+    "cap": null,
+    "automatic_topups": false
+  },
+  "authorization": {
+    "pilot_approved": true,
+    "pilot_completed": true,
+    "completed_campaign": "2026-11-01T18-18-38-840Z-9cb372",
+    "full_run_approved": false,
+    "extra_executions_approved": false
+  }
+}

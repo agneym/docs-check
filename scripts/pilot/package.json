@@ -1,0 +1,13 @@
+{
+  "name": "docs-check-pilot",
+  "private": true,
+  "type": "module",
+  "scripts": {"test": "node --test *.test.mjs", "preflight": "node host.mjs --preflight", "pilot": "node host.mjs --run"},
+  "dependencies": {
+    "@earendil-works/gondolin": "0.14.0",
+    "@earendil-works/pi-ai": "1.4.0",
+    "ajv": "8.17.1",
+    "esbuild": "0.25.12",
+    "js-tiktoken": "1.0.21"
+  }
+}

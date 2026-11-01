@@ -1,9 +1,13 @@
 # Documentation search evaluation dataset
 
-A documentation-grounded question and reference-answer set for a future comparison of **Parallel Tasks API** and **Context7 documentation search**. **Neither tool has been evaluated or queried to author this dataset.**
+A documentation-grounded question and reference-answer set for a comparison of **direct Parallel Task API with structured documentation findings** and **Context7 documentation search**. The Parallel workflow will use HTTP or the official SDK, not the deep-research CLI/skill. **Neither tool has been evaluated or queried to author this dataset.**
 
 ## Start here
 
+- [`evaluation/pilot-report.md`](evaluation/pilot-report.md) — completed four-execution pilot: isolation checks, rubric results, timing, usage, citations, and preserved setup failure. **The 48-question first pass has not started.**
+- [`evaluation/PROTOCOL.md`](evaluation/PROTOCOL.md) — evaluation process: pilot, isolation, workflow settings, blinded scoring, full-run gates, and reporting.
+- [`evaluation/pilot-config.json`](evaluation/pilot-config.json) — completed four-execution pilot configuration (authorization consumed): `core-fast`, `gpt-6.1-terra` with medium reasoning, and no monetary cap for the pilot only.
+- [`evaluation/parallel-task-spec.json`](evaluation/parallel-task-spec.json) — explicit Task API output schema for documentation findings, source URLs/excerpts, and version gaps; not a final-answer/report schema.
 - [`evaluation/questions.md`](evaluation/questions.md) — readable questions, no answers.
 - [`evaluation/questions.jsonl`](evaluation/questions.jsonl) — machine-readable public prompts.
 - [`evaluation/answer-key.md`](evaluation/answer-key.md) — reference answers, weighted criteria, common mistakes, and quoted evidence.
@@ -11,7 +15,7 @@ A documentation-grounded question and reference-answer set for a future comparis
 - [`evaluation/validation-report.json`](evaluation/validation-report.json) — mechanical validation and dataset counts.
 - [`sources/manifest.json`](sources/manifest.json) — source repositories, exact commits, paths, and SHA-256 hashes of every downloaded file.
 
-Keep the answer key, drafts, and source checkouts **out of the search/answering agents' context** during evaluation. Only the evaluator receives them. “Private” here means withheld from benchmark contestants, not filesystem access control.
+Keep the answer key, drafts, source checkouts, evaluation protocol, and judge/controller artifacts **out of the search/answering agents' context** during evaluation. Only the evaluator receives them. “Private” here means withheld from benchmark contestants, not filesystem access control.
 
 ## Documentation snapshots
 
@@ -69,9 +73,9 @@ Submit each public row's **question plus product/version context**, verbatim, to
 5. **Latency/reliability:** end-to-end median and p95 wall time, completion rate, errors, timeouts, and retries. Include library resolution, asynchronous task submission/polling, and downstream answer generation where applicable.
 6. **Cost/context:** actual provider charges where available, downstream model input/output tokens, raw retrieved content size, and cost/tokens per correct answer. Do not equate subscription access or unavailable usage accounting with zero cost.
 
-Separate **raw retrieval quality** from **end-to-end answer quality**. If one tool synthesizes answers and the other retrieves excerpts, document that asymmetry. Use the same downstream answering model, question text, time budget, and retry policy; record tool-specific settings. Preserve all raw results, including failures. Randomize execution order; repeat each question 3 times to measure variability. Report paired per-question differences, uncertainty, and family/category breakdowns, rather than a single winner by an arbitrary composite score.
+Separate **raw retrieval quality** from **end-to-end answer quality**. If one tool synthesizes answers and the other retrieves excerpts, document that asymmetry. Use a common answering model in separate, isolated calls: each receives the same question but only its own workflow's retrieved material, never the other workflow's evidence or answer. Use identical model settings, time budgets, and retry policies; record tool-specific settings. Preserve all raw results, including failures. Randomize execution order; run each question once per workflow for the first pass. Review results before deciding on additional attempts; this pass will not measure within-question run-to-run variability. Report paired per-question differences, uncertainty, and family/category breakdowns, rather than a single winner by an arbitrary composite score.
 
-Suggested next step: a small balanced pilot, then a frozen full run of **48 × 2 workflows × 3 repeats = 288 workflow executions**. Context7 library resolution and Parallel polling may require additional API calls. **Running that evaluation is a separate action; it has not been started.**
+The process is specified in [`evaluation/PROTOCOL.md`](evaluation/PROTOCOL.md). The **four-execution pilot completed** using direct Task API `core-fast`, Context7, and `gpt-6.1-terra` with medium reasoning inside fresh Gondolin VMs; see [`evaluation/pilot-report.md`](evaluation/pilot-report.md). Both workflows met all rubric criteria on the two pilot questions; the report records timing, version/index limitations, actual-cost unavailability, and an earlier host-only setup failure. These are not full-benchmark results. Next: review the pilot and freeze the full-run implementation/settings. The first full pass is **48 questions × 2 workflows × 1 attempt = 96 workflow executions**, requiring separate spending authorization. Additional attempts are not committed. **The 48-question first pass has not started.**
 
 ## Revalidate or rebuild artifacts
 
