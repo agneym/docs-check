@@ -1,0 +1,785 @@
+[
+  {
+    "id": "nextjs-01",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, what is the default caching behavior for Route Handlers, and which methods can opt into caching when Cache Components is disabled?",
+    "reference_answer": "Route Handlers are not cached by default; GET can opt into caching, for example with force-static. [e1] Other supported methods are not cached even alongside a cached GET. [e2]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Route Handlers are not cached by default; GET can opt into caching, for example with force-static.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Other supported methods are not cached even alongside a cached GET.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "All handler methods are cached automatically.",
+        "correction": "Route Handlers are not cached by default; GET can opt into caching, for example with force-static.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 51,
+        "end_line": 51,
+        "quote": "Route Handlers are not cached by default. You can, however, opt into caching for `GET` methods. Other supported HTTP methods are **not** cached. To cache a `GET` method, use a [route config option](/docs/app/guides/caching-without-cache-components#dynamic) such as `export const dynamic = 'force-static'` in your Route Handler file."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 85,
+        "end_line": 85,
+        "quote": "> **Good to know**: Other supported HTTP methods are **not** cached, even if they are placed alongside a `GET` method that is cached, in the same file."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-02",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, how do I access request cookies in a Server Component, and where can I set them?",
+    "reference_answer": "Import cookies from next/headers and await it to read incoming cookies in a Server Component; Server Functions and Route Handlers can read and write cookies. [e1] Do not set cookies during Server Component rendering; invoke a Server Function from the client or use a Route Handler. [e2]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Import cookies from next/headers and await it to read incoming cookies in a Server Component; Server Functions and Route Handlers can read and write cookies.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Do not set cookies during Server Component rendering; invoke a Server Function from the client or use a Route Handler.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Cookies can be set while rendering a Server Component.",
+        "correction": "Setting cookies is not supported during Server Component rendering; invoke a Server Function from the client or use a Route Handler.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/cookies.mdx",
+        "start_line": 6,
+        "end_line": 10,
+        "quote": "`cookies` is an **async** function that allows you to read the HTTP incoming request cookies in [Server Components](/docs/app/getting-started/server-and-client-components), and read/write outgoing request cookies in [Server Functions](/docs/app/getting-started/mutating-data) or [Route Handlers](/docs/app/api-reference/file-conventions/route)."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/cookies.mdx",
+        "start_line": 81,
+        "end_line": 81,
+        "quote": "- **Setting cookies** is not supported during Server Component rendering. To modify cookies, invoke a Server Function from the client or use a Route Handler."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-03",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "constraints",
+    "difficulty": "easy",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, where should I define a Route Handler, and can it share a segment with a page?",
+    "reference_answer": "Define it in a route.js or route.ts file inside app. [e1] A route.js and page.js cannot be at the same route segment level. [e2]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Define it in a route.js or route.ts file inside app.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "A route.js and page.js cannot be at the same route segment level.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A page and route handler may coexist at the same segment.",
+        "correction": "A route.js and page.js cannot be at the same route segment level.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 29,
+        "end_line": 29,
+        "quote": "Route Handlers are defined in a [`route.js|ts` file](/docs/app/api-reference/file-conventions/route) inside the `app` directory:"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 39,
+        "end_line": 39,
+        "quote": "Route Handlers can be nested anywhere inside the `app` directory, similar to `page.js` and `layout.js`. But there **cannot** be a `route.js` file at the same route segment level as `page.js`."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-04",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, which component type are pages and layouts by default, and when would I use a Client Component?",
+    "reference_answer": "Pages and layouts are Server Components by default. [e1] Use a Client Component for browser-only APIs such as localStorage. [e2] Use a Client Component for state and event handlers. [e3]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Pages and layouts are Server Components by default.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Use a Client Component for browser-only APIs such as localStorage.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Use a Client Component for state and event handlers.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Pages are Client Components by default.",
+        "correction": "Pages and layouts are Server Components by default.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/05-server-and-client-components.mdx",
+        "start_line": 12,
+        "end_line": 12,
+        "quote": "By default, layouts and pages are [Server Components](https://react.dev/reference/rsc/server-components), which lets you fetch data and render parts of your UI on the server, optionally cache the result, and stream it to the client. When you need interactivity or browser APIs, you can use [Client Components](https://react.dev/reference/rsc/use-client) to layer in functionality."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/05-server-and-client-components.mdx",
+        "start_line": 26,
+        "end_line": 26,
+        "quote": "- Browser-only APIs. E.g. `localStorage`, `window`, `navigator.geolocation`, etc."
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/05-server-and-client-components.mdx",
+        "start_line": 24,
+        "end_line": 24,
+        "quote": "- [State](https://react.dev/learn/managing-state) and [event handlers](https://react.dev/learn/responding-to-events). E.g. `onClick`, `onChange`."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-05",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "debugging",
+    "difficulty": "medium",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, why can a Server Component fetch with no-store show old data after a development HMR refresh, and how can I clear that cache?",
+    "reference_answer": "The development HMR cache applies even to no-store fetches, so HMR refreshes may show old data. [e1] Navigation or a full-page reload clears the cache. [e1]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The development HMR cache applies even to no-store fetches, so HMR refreshes may show old data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Navigation or a full-page reload clears the HMR cache.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "no-store guarantees fresh data across every HMR refresh.",
+        "correction": "The development HMR cache applies even to no-store fetches, so HMR refreshes may show old data; navigation or a full-page reload clears it.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/fetch.mdx",
+        "start_line": 105,
+        "end_line": 105,
+        "quote": "By default, the [HMR cache](/docs/app/api-reference/config/next-config-js/serverComponentsHmrCache) applies to all fetch requests, including those with the default `auto no cache` and `cache: 'no-store'` option. This means uncached requests will not show fresh data between HMR refreshes. However, the cache will be cleared on navigation or full-page reloads."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/fetch.mdx",
+        "start_line": 103,
+        "end_line": 103,
+        "quote": "Next.js caches `fetch` responses in Server Components across Hot Module Replacement (HMR) in local development for faster responses and to reduce costs for billed API calls."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-06",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "api-usage",
+    "difficulty": "medium",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, how does revalidatePath distinguish a concrete URL from a dynamic route pattern, and what does a layout invalidation cover?",
+    "reference_answer": "For a dynamic route pattern supply type page or layout; omit type for a literal path. [e1] A layout invalidation covers the layout, nested layouts, and pages beneath them. [e2] Do not append /page or /layout to the path; use the type parameter. [e3]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "For a dynamic route pattern supply type page or layout; omit type for a literal path.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "A layout invalidation covers the layout, nested layouts, and pages beneath them.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Do not append /page or /layout to the path; use the type parameter.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A dynamic route pattern never needs a type.",
+        "correction": "For a dynamic route pattern supply type page or layout; omit type for a literal path.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx",
+        "start_line": 29,
+        "end_line": 29,
+        "quote": "- `type`: (optional) `'page'` or `'layout'` string to change the type of path to revalidate. If `path` contains a dynamic segment, for example `/product/[slug]`, this parameter is required. If `path` is a literal path like `/product/1`, omit `type`."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx",
+        "start_line": 42,
+        "end_line": 42,
+        "quote": "- **Layouts**: Invalidates the layout (the `layout.tsx` at that segment), all nested layouts beneath it, and all pages beneath them"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx",
+        "start_line": 28,
+        "end_line": 28,
+        "quote": "- `path`: Either a string that represents your route file structure. This can be a literal path like `/product/123`, or a route pattern with dynamic segments like `/product/[slug]`. Do not append `/page` or `/layout`, use the `type` parameter instead. Must not exceed 1024 characters. This value is case-sensitive. You do not need to include a trailing slash, regardless of your [`trailingSlash`](/docs/app/api-reference/config/next-config-js/trailingSlash) config."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-07",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "migration",
+    "difficulty": "medium",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, when incrementally migrating from the Pages Router, which App Router conventions replace getStaticPaths, _app.js/_document.js, and pages/api/*?",
+    "reference_answer": "In app, generateStaticParams replaces getStaticPaths. [e1] A single app/layout.js root layout replaces pages/_app.js and pages/_document.js. [e2] The route.js Route Handler convention replaces pages/api/* API Routes. [e3]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "In app, generateStaticParams replaces getStaticPaths.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "A single app/layout.js root layout replaces pages/_app.js and pages/_document.js.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "The route.js Route Handler convention replaces pages/api/* API Routes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "App Router pages should continue using getStaticPaths.",
+        "correction": "In app, generateStaticParams replaces getStaticPaths.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/02-guides/migrating/app-router-migration.mdx",
+        "start_line": 138,
+        "end_line": 138,
+        "quote": "- Data fetching functions like `getServerSideProps` and `getStaticProps` have been replaced with [a new API](/docs/app/getting-started/fetching-data) inside `app`. `getStaticPaths` has been replaced with [`generateStaticParams`](/docs/app/api-reference/functions/generate-static-params)."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/02-guides/migrating/app-router-migration.mdx",
+        "start_line": 139,
+        "end_line": 139,
+        "quote": "- `pages/_app.js` and `pages/_document.js` have been replaced with a single `app/layout.js` root layout. [Learn more](/docs/app/api-reference/file-conventions/layout#root-layout)."
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/02-guides/migrating/app-router-migration.mdx",
+        "start_line": 142,
+        "end_line": 142,
+        "quote": "- `pages/api/*` API Routes have been replaced with the [`route.js`](/docs/app/api-reference/file-conventions/route) (Route Handler) special file."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-08",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "false-premise",
+    "difficulty": "medium",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, I assume identical GET fetches are persistently cached just because they are memoized during rendering. Is that correct, and does that memoization apply in Route Handlers?",
+    "reference_answer": "No. Matching GET fetches are memoized for one server render pass, separate from persistent caching across requests. [e1] Memoization does not apply in Route Handlers because they are not part of the React component tree. [e2]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "No. Matching GET fetches are memoized for one server render pass, separate from persistent caching across requests.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Memoization does not apply in Route Handlers because they are not part of the React component tree.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Render-pass memoization implies persistent caching.",
+        "correction": "No. Matching GET fetches are memoized for one server render pass, separate from persistent caching across requests.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/fetch.mdx",
+        "start_line": 88,
+        "end_line": 88,
+        "quote": "`fetch` requests using `GET` with the same URL and options are automatically [memoized](/docs/app/glossary#memoization) during a server render pass. If you call the same `fetch` in multiple Server Components, layouts, pages, `generateStaticParams` and `generateViewport`, Next.js executes it only once and shares the result. This is separate from persistent [caching](/docs/app/getting-started/caching): memoization lasts only for a single render pass, while cached responses persist across requests."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/fetch.mdx",
+        "start_line": 97,
+        "end_line": 97,
+        "quote": "> **Good to know**: Memoization does not apply in [Route Handlers](/docs/app/api-reference/file-conventions/route), since they are not part of the React component tree."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-09",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, after a Server Action edits a post, I need the writer to see fresh tagged data immediately; for a webhook Route Handler I can tolerate stale data. Which API and behavior should each use?",
+    "reference_answer": "Use updateTag in the Server Action; it is not available in Route Handlers. [e1] updateTag immediately expires the tag; the next request waits for fresh data rather than serving stale data. [e2] In the webhook Route Handler use revalidateTag with the max profile for stale-while-revalidate. [e3] [e4]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Use updateTag in the Server Action; it is not available in Route Handlers.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "updateTag immediately expires the tag; the next request waits for fresh data rather than serving stale data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "In the webhook Route Handler use revalidateTag with the max profile for stale-while-revalidate.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3",
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "updateTag is available in Route Handlers.",
+        "correction": "Use updateTag in the Server Action; it is not available in Route Handlers.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/updateTag.mdx",
+        "start_line": 12,
+        "end_line": 12,
+        "quote": "`updateTag` can **only** be called from within [Server Actions](/docs/app/getting-started/mutating-data). It cannot be used in Route Handlers, Client Components, or any other context."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/updateTag.mdx",
+        "start_line": 16,
+        "end_line": 16,
+        "quote": "> **Good to know**: `updateTag` immediately expires the cached data for the specified tag. The next request will wait to fetch fresh data rather than serving stale content from the cache, ensuring users see their changes immediately."
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 23,
+        "end_line": 23,
+        "quote": "- **`profile=\"max\"` (recommended)**: A one year window, long enough that requests are always served stale content while the revalidation runs."
+      },
+      {
+        "id": "e4",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 15,
+        "end_line": 15,
+        "quote": "`revalidateTag` can be called in Server Functions and Route Handlers."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-10",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, a webhook needs tagged data expired immediately without serving stale data, but updateTag fails in its Route Handler. What should I call and how must the tag be assigned first?",
+    "reference_answer": "Call revalidateTag(tag, { expire: 0 }); the next request blocks to revalidate rather than receiving stale content. [e1] updateTag is limited to Server Actions and cannot be called in a Route Handler. [e2] First assign the tag with fetch next.tags, or use cacheTag inside a use cache scope. [e3] [e4]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Call revalidateTag(tag, { expire: 0 }); the next request blocks to revalidate rather than receiving stale content.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "updateTag is limited to Server Actions and cannot be called in a Route Handler.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "First assign the tag with fetch next.tags, or use cacheTag inside a use cache scope; either method suffices.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3",
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Use updateTag directly in the webhook Route Handler.",
+        "correction": "Call revalidateTag(tag, { expire: 0 }); the next request blocks to revalidate rather than receiving stale content.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 25,
+        "end_line": 25,
+        "quote": "- **`{ expire: 0 }`**: Stale content is never served, so the next request is a blocking revalidate/cache miss. Use it when the caller needs the data gone immediately and you cannot use [`updateTag`](/docs/app/api-reference/functions/updateTag)."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/updateTag.mdx",
+        "start_line": 12,
+        "end_line": 12,
+        "quote": "`updateTag` can **only** be called from within [Server Actions](/docs/app/getting-started/mutating-data). It cannot be used in Route Handlers, Client Components, or any other context."
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 43,
+        "end_line": 43,
+        "quote": "- Using the [`next.tags`](/docs/app/api-reference/functions/fetch) option with `fetch` for caching external API requests:"
+      },
+      {
+        "id": "e4",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 49,
+        "end_line": 49,
+        "quote": "- Using [`cacheTag`](/docs/app/api-reference/functions/cacheTag) inside cached functions or components with the `'use cache'` directive:"
+      }
+    ]
+  },
+  {
+    "id": "nextjs-11",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "I am migrating app/shop/[slug]/opengraph-image.tsx from Next.js 15 to 16.4.3 App Router. It exports generateImageMetadata({ params }), returning string image IDs, and a default Image({ params, id }) function. Which arguments become promises, and which remain synchronous? Show the corrected TypeScript parameter types and how to read them; the image-rendering implementation can be omitted.",
+    "reference_answer": "In Next.js 15 these image-function arguments were read synchronously [e5]. In Next.js 16, the default image-generation function receives params and id as promises, but generateImageMetadata continues to receive synchronous params [e1]. The corrected signatures and reads for this route and string IDs are [e2][e3][e4][e6]:\n\n```tsx\nexport function generateImageMetadata({\n  params,\n}: {\n  params: { slug: string };\n}) {\n  const { slug } = params;\n  // Use slug when constructing metadata if needed.\n  return [{ id: '1', alt: slug }];\n}\n\nexport default async function Image({\n  params,\n  id,\n}: {\n  params: Promise<{ slug: string }>;\n  id: Promise<string>;\n}) {\n  const { slug } = await params;\n  const imageId = await id;\n  // Existing image-rendering implementation uses slug and imageId here.\n}\n```\n\nThe default function's rendering body is intentionally omitted as permitted by the prompt. Equivalent Promise.all reads and compatible broader ID types are acceptable. generateImageMetadata itself may be async for data fetching; that does not make its params argument a promise.",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Keeps generateImageMetadata's params synchronous, typed as { slug: string }, and reads slug directly rather than describing params as newly promise-valued.",
+        "weight": 1,
+        "evidence_ids": ["e1", "e2"]
+      },
+      {
+        "id": "c2",
+        "description": "Explains the Next.js 15-to-16 change and shows Image parameters typed as Promise<{ slug: string }> and Promise<string> for the stated string IDs; a compatible broader ID type is acceptable.",
+        "weight": 1,
+        "evidence_ids": ["e1", "e3", "e4", "e5"]
+      },
+      {
+        "id": "c3",
+        "description": "Shows asynchronous reads of both Image params and id before using their resolved values, in an async function or equivalent documented implementation.",
+        "weight": 1,
+        "evidence_ids": ["e4", "e6"]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Both exports now receive promise-valued params because all Next.js 16 params are async.",
+        "correction": "The image-generation function receives promise-valued params and id; generateImageMetadata still receives synchronous params.",
+        "evidence_ids": ["e1", "e2"]
+      },
+      {
+        "claim": "Only Image params becomes a promise; id remains a string argument.",
+        "correction": "Image id is also a promise, resolving here to a string because the metadata returns string IDs.",
+        "evidence_ids": ["e1", "e3"]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/02-guides/upgrading/version-16.mdx",
+        "start_line": 316,
+        "end_line": 316,
+        "quote": "Starting with **Next.js 16**, to align with the [Async Request APIs](#async-request-apis-breaking-change) change, the image generating function now receives `params` and `id` as promises. The `generateImageMetadata` function continues to receive synchronous `params`."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx",
+        "start_line": 22,
+        "end_line": 28,
+        "quote": "export function generateImageMetadata({\n  params,\n}: {\n  params: { slug: string }\n}) {\n  // ...\n}"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx",
+        "start_line": 140,
+        "end_line": 149,
+        "quote": "A promise that resolves to the `id` value from one of the items returned by `generateImageMetadata`. The `id` will be a `string` or `number` depending on what was returned from `generateImageMetadata`."
+      },
+      {
+        "id": "e4",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx",
+        "start_line": 160,
+        "end_line": 170,
+        "quote": "export default async function Icon({\n  params,\n}: {\n  params: Promise<{ slug: string }>\n}) {\n  const { slug } = await params\n  // Use slug to generate the image\n}"
+      },
+      {
+        "id": "e5",
+        "path": "sources/nextjs/docs/01-app/02-guides/upgrading/version-16.mdx",
+        "start_line": 308,
+        "end_line": 312,
+        "quote": "// Next.js 15 - synchronous params and id access\nexport default function Image({ params, id }) {\n  const slug = params.slug\n  const imageId = id // string\n  // ..."
+      },
+      {
+        "id": "e6",
+        "path": "sources/nextjs/docs/01-app/02-guides/upgrading/version-16.mdx",
+        "start_line": 324,
+        "end_line": 328,
+        "quote": "// Next.js 16 - asynchronous params and id access\nexport default async function Image({ params, id }) {\n  const { slug } = await params // params now async\n  const imageId = await id // id is now Promise<string> when using generateImageMetadata\n  // ..."
+      }
+    ]
+  },
+  {
+    "id": "nextjs-12",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "constraints",
+    "difficulty": "hard",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, with Cache Components enabled, how do GET Route Handlers behave with runtime data, and how can a database query be included in a static response?",
+    "reference_answer": "GET handlers run at request time by default, but can be prerendered if they do not access uncached or runtime data. [e1] Request-specific data such as request headers or cookies stops prerendering. [e2] Extract the query to a helper with use cache to include the data in the prerendered response; do not put the directive directly in the Route Handler body. [e3] [e4]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "GET handlers run at request time by default, but can be prerendered if they do not access uncached or runtime data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Request-specific data such as request headers or cookies stops prerendering.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Extract the database query to a helper with use cache to include it in the prerendered response; do not put the directive directly in the handler body.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3",
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Place use cache directly in the handler body.",
+        "correction": "Extract the cached work into a helper function and put use cache there, not directly in the Route Handler body.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 89,
+        "end_line": 89,
+        "quote": "When [Cache Components](/docs/app/getting-started/caching) is enabled, `GET` Route Handlers follow the same model as normal UI routes in your application. They run at request time by default, can be prerendered when they don't access uncached or runtime data, and you can use `use cache` to include uncached data in the static response."
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 124,
+        "end_line": 124,
+        "quote": "> **Good to know**: Prerendering stops if the `GET` handler accesses network requests, database queries, async file system operations, request object properties (like `req.url`, `request.headers`, `request.cookies`, `request.body`), runtime APIs like [`cookies()`](/docs/app/api-reference/functions/cookies), [`headers()`](/docs/app/api-reference/functions/headers), [`connection()`](/docs/app/api-reference/functions/connection), or non-deterministic operations."
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 144,
+        "end_line": 144,
+        "quote": "> **Good to know**: `use cache` cannot be used directly inside a Route Handler body; extract it to a helper function. Cached responses revalidate according to `cacheLife` when a new request arrives."
+      },
+      {
+        "id": "e4",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 126,
+        "end_line": 126,
+        "quote": "**Cached example** - accesses uncached data (database query) but caches it with `use cache`, allowing it to be included in the prerendered response:"
+      }
+    ]
+  }
+]

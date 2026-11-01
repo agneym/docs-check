@@ -1,0 +1,96 @@
+---
+title: Attachments
+description: Embed files such as invoice XML in a PDF, and set the fields PDF/A-3 requires on each attachment.
+---
+
+Pass files through `attachments` to embed source data, supporting documents, or invoice XML. Viewers with an attachment panel list them there. This example embeds a Factur-X XML file:
+
+```tsx twoslash title="Attachments"
+import type { ReactNode } from "react";
+declare const invoice: ReactNode;
+declare const xml: string;
+// ---cut---
+import { render } from "takumi-pdf";
+
+const pdf = await render(invoice, {
+  // [!code highlight]
+  attachments: [
+    {
+      name: "factur-x.xml",
+      data: xml,
+      mimeType: "application/xml",
+      description: "Factur-X invoice data",
+      relationship: "alternative",
+    },
+  ],
+});
+```
+
+| Field              | Value                                                                             |
+| ------------------ | --------------------------------------------------------------------------------- |
+| `name`             | File name in the PDF. Two attachments cannot share a name.                        |
+| `data`             | A `Uint8Array`, or a string written as UTF-8                                      |
+| `mimeType`         | IANA media type, such as `"application/xml"`                                      |
+| `description`      | Human-readable description                                                        |
+| `relationship`     | The file's role, written as `AFRelationship`. The next table lists the values.    |
+| `modificationDate` | UTC `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SS`. Falls back to `metadata.creationDate`. |
+
+`relationship` takes one of these values.
+
+| Value           | Meaning                                          |
+| --------------- | ------------------------------------------------ |
+| `"source"`      | The document was created from this file.         |
+| `"alternative"` | An alternative representation of the document.   |
+| `"data"`        | The file backs a visual presentation in the PDF. |
+| `"supplement"`  | Additional resources for the document.           |
+| `"unspecified"` | No clear relationship. The default.              |
+
+## Electronic invoices
+
+For a Factur-X or ZUGFeRD document, use PDF/A-3 and attach the invoice XML. [Invoices](/docs/pdf/invoices#electronic-invoices) covers the rest of the setup.
+
+```tsx twoslash title="Electronic invoices"
+import type { ReactNode } from "react";
+declare const invoice: ReactNode;
+declare const xml: string;
+// ---cut---
+import { render } from "takumi-pdf";
+
+const pdf = await render(invoice, {
+  // [!code highlight]
+  pdfa: "3b",
+  metadata: { title: "Invoice 1042", creationDate: "2026-08-06" },
+  attachments: [
+    {
+      name: "factur-x.xml",
+      data: xml,
+      mimeType: "application/xml",
+      description: "Factur-X invoice data",
+      relationship: "alternative",
+    },
+  ],
+});
+```
+
+The PDF/A-3 levels require three fields on each attachment:
+
+- `mimeType`
+- `description`
+- a modification date from `modificationDate`, or the `metadata.creationDate` fallback
+
+TypeScript enforces `mimeType` and `description` under these levels. A missing date fails the render.
+
+## Levels that allow attachments
+
+| `pdfa`                        | Attachments                                                     |
+| ----------------------------- | --------------------------------------------------------------- |
+| unset                         | Allowed                                                         |
+| `"3b"`, `"3u"`, `"3a"`        | Allowed, with the three fields above                            |
+| `"4f"`                        | Allowed, with `mimeType` and `description`. The PDF 2.0 option. |
+| `"2b"`, `"2u"`, `"2a"`, `"4"` | Not allowed, and a TypeScript type error                        |
+
+<Callout type="warn">
+  Attaching the XML does not validate it or its profile. Add the profile's XMP metadata and validate
+  the result as described in [Invoices](/docs/pdf/invoices#electronic-invoices). See also [PDF/A and
+  PDF/UA](/docs/pdf/conformance) for the levels.
+</Callout>

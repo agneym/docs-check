@@ -1,0 +1,751 @@
+[
+  {
+    "id": "tanstack-01",
+    "project": "tanstack",
+    "product": "TanStack Query for React",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Query for React, what are the default retry count and retry delay for failed queries, and how does server rendering differ?",
+    "reference_answer": "By default failed queries retry three times with exponential backoff [e1], starting at 1000 ms and capped at 30 seconds [e3]; server retries default to zero [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Default is three retries.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Delay doubles from 1000 ms up to 30 seconds.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Server retry default is zero.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Server queries also retry three times by default.",
+        "correction": "Server retries default to zero.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-query/docs/framework/react/guides/important-defaults.md",
+        "start_line": 33,
+        "end_line": 35,
+        "quote": "- Queries that fail are **silently retried 3 times, with exponential backoff delay** before capturing and displaying an error to the UI.\n\n  > To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function."
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-retries.md",
+        "start_line": 15,
+        "end_line": 17,
+        "quote": "[//]: # 'Info'\n\n> On the server, retries default to `0` to make server rendering as fast as possible."
+      },
+      {
+        "id": "e3",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-retries.md",
+        "start_line": 39,
+        "end_line": 41,
+        "quote": "By default, retries in TanStack Query do not happen immediately after a request fails. As is standard, a back-off delay is gradually applied to each retry attempt.\n\nThe default `retryDelay` is set to double (starting at `1000`ms) with each attempt, but not exceed 30 seconds:"
+      }
+    ]
+  },
+  {
+    "id": "tanstack-02",
+    "project": "tanstack",
+    "product": "TanStack Query for React",
+    "category": "false-premise",
+    "difficulty": "medium",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Query for React, I assume a disabled useQuery automatically refetches after invalidateQueries and that skipToken still permits its returned refetch. Is that correct, and what should I use for manual fetching?",
+    "reference_answer": "No. An enabled: false query ignores invalidation/refetch calls that would normally refetch it, but its returned refetch can manually fetch [e1]. skipToken does not support refetch; calling it yields Missing queryFn. Use enabled: false when manual refetch is needed [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Disabled queries ignore invalidation-triggered refetch.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Returned refetch works with enabled: false.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "skipToken refetch fails with Missing queryFn.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "skipToken supports manual refetch.",
+        "correction": "It fails because there is no valid query function.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-query/docs/framework/react/guides/disabling-queries.md",
+        "start_line": 8,
+        "end_line": 15,
+        "quote": "When `enabled` is `false`:\n\n- If the query has cached data, then the query will be initialized in the `status === 'success'` or `isSuccess` state.\n- If the query does not have cached data, then the query will start in the `status === 'pending'` and `fetchStatus === 'idle'` state.\n- The query will not automatically fetch on mount.\n- The query will not automatically refetch in the background.\n- The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.\n- `refetch` returned from `useQuery` can be used to manually trigger the query to fetch. However, it will not work with `skipToken`."
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/disabling-queries.md",
+        "start_line": 96,
+        "end_line": 100,
+        "quote": "## Typesafe disabling of queries using `skipToken`\n\nIf you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want the query to be type safe.\n\n> **IMPORTANT**: `refetch` from `useQuery` will not work with `skipToken`. Calling `refetch()` on a query that uses `skipToken` will result in a `Missing queryFn` error because there is no valid query function to execute. If you need to manually trigger queries, consider using `enabled: false` instead, which allows `refetch()` to work properly. Other than this limitation, `skipToken` works the same as `enabled: false`."
+      }
+    ]
+  },
+  {
+    "id": "tanstack-03",
+    "project": "tanstack",
+    "product": "TanStack Query for React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Query for React, compare staleTime Infinity and static when invalidating an active query, including the special always-refetch options.",
+    "reference_answer": "Infinity prevents staleness-based refetches but manual invalidation works; active invalidated queries normally refetch in the background [e1][e2]. Static prevents invalidation-triggered refetches and blocks refetchOnMount, refetchOnWindowFocus and refetchOnReconnect set to always [e1].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Infinity allows manual invalidation and normal background refetch of an active query.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1",
+          "e2"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Static prevents invalidation from triggering a refetch.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Static blocks the three named always-refetch options.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Infinity and static have identical invalidation behavior.",
+        "correction": "Static is stricter and prevents invalidation-triggered refetches.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-query/docs/framework/react/guides/important-defaults.md",
+        "start_line": 12,
+        "end_line": 17,
+        "quote": "- A Query that has a `staleTime` set is considered **fresh** until that `staleTime` has elapsed.\n  - set `staleTime` to e.g. `2 * 60 * 1000` to make sure data is read from the cache, without triggering any kinds of refetches, for 2 minutes, or until the Query is [invalidated manually](./query-invalidation.md).\n  - set `staleTime` to `Infinity` to never trigger a refetch until the Query is [invalidated manually](./query-invalidation.md).\n  - set `staleTime` to `'static'` to **never** trigger a refetch, even if the Query is [invalidated manually](./query-invalidation.md).\n\n> `'static'` and `Infinity` both prevent staleness-based refetches, but `'static'` is stricter: `queryClient.invalidateQueries()` can invalidate a query with `staleTime: Infinity`, but has no effect on `staleTime: 'static'`. `refetchOnMount`, `refetchOnWindowFocus`, and `refetchOnReconnect` set to `\"always\"` are also blocked by `'static'`. Use `'static'` for data that cannot change while the app is running: feature flags fetched at boot, user permissions loaded at login, static reference tables. Use `Infinity` when you still want manual invalidation to work."
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-invalidation.md",
+        "start_line": 21,
+        "end_line": 24,
+        "quote": "When a query is invalidated with `invalidateQueries`, two things happen:\n\n- It is marked as stale. This stale state overrides any `staleTime` configurations being used in `useQuery` or related hooks\n- If the query is currently being rendered via `useQuery` or related hooks, it will also be refetched in the background"
+      }
+    ]
+  },
+  {
+    "id": "tanstack-04",
+    "project": "tanstack",
+    "product": "TanStack Query for React",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Query for React, how can I invalidate every query whose key begins with todos, and how can I restrict this to the exact key?",
+    "reference_answer": "Use queryClient.invalidateQueries({ queryKey: ['todos'] }) for the prefix [e1]. Add exact: true to restrict the match to exactly that key, excluding keys with extra subkeys [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Use the todos queryKey as a prefix filter.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Add exact: true to exclude keys with additional parts.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A todos key filter is exact by default.",
+        "correction": "It matches keys beginning with todos unless exact is set.",
+        "evidence_ids": [
+          "e1",
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-invalidation.md",
+        "start_line": 27,
+        "end_line": 49,
+        "quote": "\nWhen using APIs like `invalidateQueries` and `removeQueries` (and others that support partial query matching), you can match multiple queries by their prefix, or get really specific and match an exact query. For information on the types of filters you can use, please see [Query Filters](./filters.md#query-filters).\n\nIn this example, we can use the `todos` prefix to invalidate any queries that start with `todos` in their query key:\n\n[//]: # 'Example2'\n\n```tsx\nimport { useQuery, useQueryClient } from '@tanstack/react-query'\n\n// Get QueryClient from the context\nconst queryClient = useQueryClient()\n\nqueryClient.invalidateQueries({ queryKey: ['todos'] })\n\n// Both queries below will be invalidated\nconst todoListQuery = useQuery({\n  queryKey: ['todos'],\n  queryFn: fetchTodoList,\n})\nconst todoListQuery = useQuery({\n  queryKey: ['todos', { page: 1 }],\n  queryFn: fetchTodoList,"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-invalidation.md",
+        "start_line": 79,
+        "end_line": 99,
+        "quote": "The `invalidateQueries` API is very flexible, so even if you want to **only** invalidate `todos` queries that don't have any more variables or subkeys, you can pass an `exact: true` option to the `invalidateQueries` method:\n\n[//]: # 'Example4'\n\n```tsx\nqueryClient.invalidateQueries({\n  queryKey: ['todos'],\n  exact: true,\n})\n\n// The query below will be invalidated\nconst todoListQuery = useQuery({\n  queryKey: ['todos'],\n  queryFn: fetchTodoList,\n})\n\n// However, the following query below will NOT be invalidated\nconst todoListQuery = useQuery({\n  queryKey: ['todos', { type: 'done' }],\n  queryFn: fetchTodoList,\n})"
+      }
+    ]
+  },
+  {
+    "id": "tanstack-05",
+    "project": "tanstack",
+    "product": "TanStack Router for React",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Router for React, how do preload freshness and unused retention defaults differ, and when is unused data removed?",
+    "reference_answer": "Preloaded loader data is fresh for 30 seconds by default; unused results have a 5-minute retention window and become eligible for pruning during later cache reconciliation, not at a scheduled exact eviction time [e1][e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Freshness defaults to 30 seconds.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Unused retention defaults to 5 minutes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Pruning occurs on a later reconciliation rather than at a guaranteed exact deadline.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Every preload is evicted exactly five minutes after it is created.",
+        "correction": "The window determines eligibility for later pruning.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/router/guide/preloading.md",
+        "start_line": 20,
+        "end_line": 31,
+        "quote": "\nSuccessful preloaded loader results can enter the router's in-memory cache with\ntwo independent policies:\n\n- **Freshness defaults to 30 seconds.** Configure it with\n  `defaultPreloadStaleTime` or a route's `preloadStaleTime`.\n- **The unused retention window defaults to 5 minutes.** Configure it with\n  `defaultPreloadGcTime` or a route's `preloadGcTime`. Older unused entries\n  are eligible for pruning during a later cache reconciliation.\n- **The speculative lane is never promoted into router state.** Navigation\n  creates its own presentation and runs its own `beforeLoad` chain. It can reuse\n  cached loader data or join a loader that is still in flight."
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-router/docs/router/guide/preloading.md",
+        "start_line": 102,
+        "end_line": 108,
+        "quote": "retained loader result can be reused without another loader call.\n`preloadGcTime` (or `defaultPreloadGcTime`) controls when an unused preload\nresult becomes eligible for pruning during a later cache reconciliation; it\ndoes not schedule a timer to evict the result at that exact moment. Both preload\nGC options default to 5 minutes.\n\nTo change this, you can set the `defaultPreloadStaleTime` option on your router:"
+      }
+    ]
+  },
+  {
+    "id": "tanstack-06",
+    "project": "tanstack",
+    "product": "TanStack Router and Query for React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Router and Query main-branch documentation snapshots; not release-pinned.",
+    "question": "A React app uses TanStack Router loaders with TanStack Query. Query should decide whether preloaded data is fresh, rather than Router skipping the loader because of its own preload freshness window. What Router setting enables this? Show how a loader and component can share a posts query definition while the component remains subscribed to Query updates. Assume fetchPosts returns an array of posts and the router context and QueryClientProvider already use the same QueryClient. Choose an example Query freshness window and explain why the Router setting does not disable Query caching.",
+    "reference_answer": "Set defaultPreloadStaleTime: 0 on the router, or preloadStaleTime: 0 on the route. This makes settled Router preload results immediately stale so Query can make the freshness decision; it does not disable retention, Query caching, or in-flight sharing [e1]. Share queryKey, queryFn, and a chosen staleTime through queryOptions [e2]. Here is a route-level implementation using an illustrative 30-second Query freshness window [e3][e4]:\n\n```tsx\nimport { queryOptions, useSuspenseQuery } from '@tanstack/react-query';\nimport { createFileRoute } from '@tanstack/react-router';\n\nconst postsQuery = queryOptions({\n  queryKey: ['posts'],\n  queryFn: fetchPosts,\n  staleTime: 30_000,\n});\n\nexport const Route = createFileRoute('/posts')({\n  preloadStaleTime: 0,\n  loader: ({ context }) => context.queryClient.query(postsQuery),\n  component: PostsPage,\n});\n\nfunction PostsPage() {\n  const { data: posts } = useSuspenseQuery(postsQuery);\n  return <div>{posts.map((post) => post.title).join(', ')}</div>;\n}\n```\n\nReturning the loader's promise waits for data. Query can return its own fresh cached data without fetching, or fetch if stale or absent [e4]. The component hook subscribes to updates rather than merely reading a loader snapshot [e3]. The example's 30 seconds is an application choice, not a required default. The snapshot documents queryClient.query; accept other documented equivalent loader APIs when valid for the requested scope.",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Sets router defaultPreloadStaleTime or route preloadStaleTime to zero so the external Query cache can decide freshness.",
+        "weight": 1,
+        "evidence_ids": ["e1"]
+      },
+      {
+        "id": "c2",
+        "description": "Shows a shared posts queryKey and queryFn definition, for example queryOptions, and an explicitly chosen Query staleTime rather than treating a particular freshness window as mandatory.",
+        "weight": 1,
+        "evidence_ids": ["e2"]
+      },
+      {
+        "id": "c3",
+        "description": "Shows a loader that returns or awaits a Query cache-populating request and a component Query hook using the same definition and QueryClient to remain subscribed to updates.",
+        "weight": 2,
+        "evidence_ids": ["e2", "e3"]
+      },
+      {
+        "id": "c4",
+        "description": "Explains that zero Router preload freshness does not disable Query caching: Query still uses its own staleTime to reuse fresh cached data or fetch stale or missing data.",
+        "weight": 1,
+        "evidence_ids": ["e1", "e4"]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Set Query staleTime to zero; Router's preload freshness can remain unchanged.",
+        "correction": "Set Router defaultPreloadStaleTime or route preloadStaleTime to zero so Router does not use its settled preload freshness to bypass Query's decision.",
+        "evidence_ids": ["e1"]
+      },
+      {
+        "claim": "Zero Router preload freshness disables caching and forces a network request on every navigation.",
+        "correction": "Query still reuses fresh cached data according to its own staleTime; Router retention and in-flight sharing are separate.",
+        "evidence_ids": ["e1", "e4"]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/router/guide/preloading.md",
+        "start_line": 164,
+        "end_line": 169,
+        "quote": "To let an external cache make the freshness decision, set\n`routerOptions.defaultPreloadStaleTime` or `routeOptions.preloadStaleTime` to\n`0`. Settled preload data then becomes immediately stale in the Router, while\nretention still follows `preloadGcTime`. Overlapping preload or navigation\nconsumers can still share in-flight loader work, and `shouldReload` can still\nsuppress a loader call."
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-options.md",
+        "start_line": 11,
+        "end_line": 28,
+        "quote": "import { queryOptions } from '@tanstack/react-query'\n\nfunction groupOptions(id: number) {\n  return queryOptions({\n    queryKey: ['groups', id],\n    queryFn: () => fetchGroups(id),\n    staleTime: 5 * 1000,\n  })\n}\n\n// usage:\n\nuseQuery(groupOptions(1))\nuseSuspenseQuery(groupOptions(5))\nuseQueries({\n  queries: [groupOptions(1), groupOptions(2)],\n})\nqueryClient.query(groupOptions(23))"
+      },
+      {
+        "id": "e3",
+        "path": "sources/tanstack-router/docs/router/guide/external-data-loading.md",
+        "start_line": 80,
+        "end_line": 93,
+        "quote": "const postsQueryOptions = queryOptions({\n  queryKey: ['posts'],\n  queryFn: () => fetchPosts(),\n})\n\nexport const Route = createFileRoute('/posts')({\n  // Use the `loader` option to ensure that the data is loaded\n  loader: () =>\n    queryClient.query({ ...postsQueryOptions, staleTime: 'static' }),\n  component: () => {\n    // Read the data from the cache and subscribe to updates\n    const {\n      data: { posts },\n    } = useSuspenseQuery(postsQueryOptions)"
+      },
+      {
+        "id": "e4",
+        "path": "sources/tanstack-query/docs/framework/react/reference/classes/QueryClient.md",
+        "start_line": 1087,
+        "end_line": 1090,
+        "quote": "If the query already exists in the cache and its data is not stale (per the given\n`staleTime`), the cached data is returned without fetching. Otherwise, the query is fetched\nand the promise resolves once the fetch settles. If a `select` function is provided, it is\napplied to the data in both cases (cached or freshly fetched) before it is returned."
+      }
+    ]
+  },
+  {
+    "id": "tanstack-07",
+    "project": "tanstack",
+    "product": "TanStack Router for React",
+    "category": "api-usage",
+    "difficulty": "medium",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Router for React, how are nested URL search parameters represented, and how should a route turn parsed search parameters into trusted typed values?",
+    "reference_answer": "The default JSON-first parser encodes nested data as URL-safe JSON strings [e1]. Use the route validateSearch function: it receives parsed but unvalidated search as Record<string, unknown> and returns a typed object, ideally with sensible fallbacks [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Nested structures are encoded as URL-safe JSON strings.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "validateSearch receives unvalidated parsed values and returns a typed object; sensible fallbacks are recommended.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Parsed search values are automatically trusted and need no validation.",
+        "correction": "The route should validate them with validateSearch.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/router/guide/search-params.md",
+        "start_line": 77,
+        "end_line": 81,
+        "quote": "If you noticed, there are a few things going on here:\n\n- The first level of the search params is flat and string based, just like `URLSearchParams`.\n- First level values that are not strings are accurately preserved as actual numbers and booleans.\n- Nested data structures are automatically converted to URL-safe JSON strings"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-router/docs/router/guide/search-params.md",
+        "start_line": 116,
+        "end_line": 118,
+        "quote": "### Validating Search Params\n\nThe `validateSearch` option is a function that is provided the JSON parsed (but non-validated) search params as a `Record<string, unknown>` and returns a typed object of your choice. It's usually best to provide sensible fallbacks for malformed or unexpected search params so your users' experience stays non-interrupted."
+      }
+    ]
+  },
+  {
+    "id": "tanstack-08",
+    "project": "tanstack",
+    "product": "TanStack Start for React",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Start for React, should an API intended for external cross-origin callers use a server function or a server route? What HTTP method does createServerFn use by default?",
+    "reference_answer": "Use a server route for external or intentionally cross-origin APIs; server functions are same-origin RPC endpoints intended for the Start application [e1]. createServerFn defaults to GET [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Use server routes for external or cross-origin endpoints.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Server functions are same-origin RPC for the app.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "createServerFn defaults to GET.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Server functions are the recommended public cross-origin API.",
+        "correction": "Use server routes for that purpose.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/start/framework/react/guide/server-functions.md",
+        "start_line": 23,
+        "end_line": 29,
+        "quote": "\n> [!NOTE]\n> Server functions are meant to be called by your TanStack Start application. They are easy to use from your app code, and Start handles serialization across the client/server boundary. If you need an endpoint that can be called from outside your Start app, use [server routes](./server-routes) instead.\n\n## Same-Origin Requests\n\nServer functions are same-origin RPC endpoints for your application. Browser requests to server functions should come from the same origin, verified with Fetch Metadata (`Sec-Fetch-Site`), `Origin`, or `Referer` headers. Use server routes for public APIs or endpoints that intentionally support cross-origin requests."
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-router/docs/start/framework/react/guide/server-functions.md",
+        "start_line": 53,
+        "end_line": 61,
+        "quote": "Server functions are created with `createServerFn()` and can specify HTTP method:\n\n```tsx\nimport { createServerFn } from '@tanstack/react-start'\n\n// GET request (default)\nexport const getData = createServerFn().handler(async () => {\n  return { message: 'Hello from server!' }\n})"
+      }
+    ]
+  },
+  {
+    "id": "tanstack-09",
+    "project": "tanstack",
+    "product": "TanStack Start for React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Start for React, what happens to server-function CSRF protection when adding a custom src/start.ts, and which middleware type applies to server functions as well as SSR requests?",
+    "reference_answer": "Without src/start.ts Start installs server-function CSRF middleware automatically; if you define it, explicitly add createCsrfMiddleware, typically filtered to serverFn [e1]. Request middleware covers server requests including SSR and server functions [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Without src/start.ts server-function CSRF middleware is installed automatically.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "With custom src/start.ts explicitly add createCsrfMiddleware for server functions.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Request middleware covers SSR requests and server functions.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A custom start.ts preserves automatic CSRF middleware installation.",
+        "correction": "Add it explicitly.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/start/framework/react/guide/server-functions.md",
+        "start_line": 29,
+        "end_line": 42,
+        "quote": "Server functions are same-origin RPC endpoints for your application. Browser requests to server functions should come from the same origin, verified with Fetch Metadata (`Sec-Fetch-Site`), `Origin`, or `Referer` headers. Use server routes for public APIs or endpoints that intentionally support cross-origin requests.\n\nTanStack Start provides `createCsrfMiddleware()` to protect server functions from cross-site requests. If your app does not define `src/start.ts`, Start installs this middleware automatically for server functions. If you define `src/start.ts`, add the middleware explicitly:\n\n```tsx\n// src/start.ts\nimport { createStart, createCsrfMiddleware } from '@tanstack/react-start'\n\nconst csrfMiddleware = createCsrfMiddleware({\n  filter: (ctx) => ctx.handlerType === 'serverFn',\n})\n\nexport const startInstance = createStart(() => ({\n  requestMiddleware: [csrfMiddleware],"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-router/docs/start/framework/react/guide/middleware.md",
+        "start_line": 82,
+        "end_line": 85,
+        "quote": "## Request Middleware\n\nRequest middleware is used to customize the behavior of any server request that passes through it, including server routes, SSR and server functions."
+      }
+    ]
+  },
+  {
+    "id": "tanstack-10",
+    "project": "tanstack",
+    "product": "TanStack Table for React",
+    "category": "migration",
+    "difficulty": "medium",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "When migrating a React table from TanStack Table v8 to the full v9 useTable API, what hook and feature configuration changes are required, and what temporary compatibility alternative is available?",
+    "reference_answer": "For the full v9 API, replace useReactTable with useTable and provide the required features option [e1][e2]. Alternatively, useLegacyTable accepts v8-style options on v9, but is deprecated, temporary, and includes all features [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "For the full v9 API, replace useReactTable with useTable.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "For useTable, provide the required features configuration.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "useLegacyTable is a deprecated temporary v8-style compatibility shortcut that includes all features.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "useLegacyTable is the preferred permanent v9 hook.",
+        "correction": "It is deprecated and intended as a temporary migration aid.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-table/docs/framework/react/guide/migrating.md",
+        "start_line": 91,
+        "end_line": 109,
+        "quote": "### Hook Rename\n\nThe number one change: `useReactTable` is now `useTable`, consistent with hook naming across all TanStack libraries:\n\n```tsx\n// Table V8\nimport { useReactTable } from '@tanstack/react-table'\nconst table = useReactTable(options)\n\n// Table V9\nimport { useTable } from '@tanstack/react-table'\nconst table = useTable(options)\n```\n\n### New Required `features` Table Option\n\nIn Table V9, you must explicitly declare which features your table uses. Features, Row Models, and Row Model processing \"Fns\" are defined on the new `features` table option.\n\nIn Table V8, all features were bundled and included in the `useReactTable` hook. In Table V9, you import only what you need."
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-table/docs/framework/react/guide/migrating.md",
+        "start_line": 105,
+        "end_line": 109,
+        "quote": "### New Required `features` Table Option\n\nIn Table V9, you must explicitly declare which features your table uses. Features, Row Models, and Row Model processing \"Fns\" are defined on the new `features` table option.\n\nIn Table V8, all features were bundled and included in the `useReactTable` hook. In Table V9, you import only what you need."
+      },
+      {
+        "id": "e3",
+        "path": "sources/tanstack-table/docs/framework/react/guide/migrating.md",
+        "start_line": 65,
+        "end_line": 67,
+        "quote": "## Quick Legacy Migration\n\nNeed to migrate incrementally? We are providing a temporary shortcut with the `useLegacyTable` hook. It accepts the Table V8-style API while using Table V9 under the hood. **This is deprecated** and intended only as a temporary migration aid. It includes all features by default, so your bundle will be even larger than it was with Table V8."
+      }
+    ]
+  },
+  {
+    "id": "tanstack-11",
+    "project": "tanstack",
+    "product": "TanStack Table for React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "With TanStack Table v9 for React using manual server-side pagination, why can row selection state contain IDs that getSelectedRowModel does not return, and how should row IDs be chosen?",
+    "reference_answer": "manualPagination assumes supplied data is already paginated [e1]. getSelectedRowModel can only return selected rows on the current page, while selection state can retain IDs absent from that data [e2]. Row IDs default to row.index; supply getRowId for a stable unique identifier such as a database ID [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Manual pagination assumes passed data is already paginated.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "The selected row model only includes current-page rows, while selection state may contain other IDs.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Row IDs default to row.index and getRowId can supply unique IDs.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "getSelectedRowModel retrieves selected records from all server pages.",
+        "correction": "It can only generate rows from the data passed in.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-table/docs/framework/react/guide/pagination.md",
+        "start_line": 80,
+        "end_line": 84,
+        "quote": "### Manual Server-Side Pagination\n\nIf you decide that you need to use server-side pagination, here is how you can implement it.\n\nNo pagination row model is needed for server-side pagination, but if you have provided it for other tables that do need it in a shared component, you can still turn off the client-side pagination by setting the `manualPagination` option to `true`. Setting the `manualPagination` option to `true` will tell the table instance to use the `table.getPrePaginatedRowModel` row model under the hood, and it will make the table instance assume that the `data` that you pass in is already paginated."
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-table/docs/framework/react/guide/row-selection.md",
+        "start_line": 53,
+        "end_line": 54,
+        "quote": "> [!NOTE]\n> If you are using `manualPagination`, be aware that the `getSelectedRowModel` API will only return selected rows on the current page because table row models can only generate rows based on the `data` that is passed in. Row selection state, however, can contain row ids that are not present in the `data` array just fine."
+      },
+      {
+        "id": "e3",
+        "path": "sources/tanstack-table/docs/framework/react/guide/row-selection.md",
+        "start_line": 100,
+        "end_line": 102,
+        "quote": "### Useful Row Ids\n\nBy default, the row id for each row is simply the `row.index`. If you are using row selection features, you most likely want to use a more useful row identifier, since the row selection state is keyed by row id. You can use the `getRowId` table option to specify a function that returns a unique row id for each row."
+      }
+    ]
+  },
+  {
+    "id": "tanstack-12",
+    "project": "tanstack",
+    "product": "TanStack Table for React",
+    "category": "constraints",
+    "difficulty": "medium",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Table v9 for React, what happens to pageIndex auto-reset by default with manualPagination, why might explicitly enabling auto-reset still not reset it when server-side sorting changes, and how should you handle the missing reset?",
+    "reference_answer": "pageIndex normally resets to zero when client row models recompute; manualPagination disables that default, though autoResetPageIndex can override it [e1]. If the relevant client-side row model is absent in a manual server-side table, sorting changes do not trigger a reset even if enabled; reset pageIndex in the change handler [e1].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Client row-model recomputation normally resets pageIndex to zero, but manualPagination disables that default.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "The option can be explicitly overridden.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Without the relevant client-side row model no automatic reset occurs; reset in the change handler.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Setting autoResetPageIndex true always resets server-side sorting changes.",
+        "correction": "A relevant included client-side row model must recompute.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-table/docs/framework/react/guide/pagination.md",
+        "start_line": 283,
+        "end_line": 288,
+        "quote": "#### Auto Reset Page Index\n\nBy default, `pageIndex` is reset to `0` whenever the client-side row models recompute, such as when the `data` is updated, filters change, sorting changes, or grouping changes. This behavior is automatically disabled when `manualPagination` is `true`, but it can be overridden by explicitly assigning a boolean value to the `autoResetPageIndex` table option. There is also a global `autoResetAll` table option that disables (or enables) every auto-reset behavior at once.\n\n> [!NOTE]\n> Automatic resets run only when an included client-side row model that triggers them recomputes. If a manual server-side table omits the filtered, sorted, grouped, or other relevant row model, changing that controlled state does not trigger a page-index reset, even when `autoResetPageIndex` or `autoResetAll` is `true`. Reset `pageIndex` yourself in the corresponding change handler."
+      }
+    ]
+  }
+]

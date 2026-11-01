@@ -1,0 +1,148 @@
+---
+title: Templates
+description: Add an Open Graph card template to your project with the shadcn CLI and serve it from a Next.js route.
+---
+
+Copy an Open Graph card into your project, then edit its content and styles. The [shadcn CLI](https://ui.shadcn.com/docs/cli) adds the card and installs `takumi-js`. Every item lives under `image/`, and cards land in `components/takumi/image/`.
+
+```npm
+npx shadcn@latest add https://takumi.kane.tw/r/image/blog-post.json
+```
+
+To add items by name, register the namespace in `components.json`.
+
+```json title="components.json"
+{
+  "registries": {
+    "@takumi": "https://takumi.kane.tw/r/{name}.json"
+  }
+}
+```
+
+```npm
+npx shadcn@latest add @takumi/image/blog-post
+```
+
+## A route that answers with an image
+
+`image/og-route` adds a Next.js route handler and the blog post card it renders. The route serves `/og` and reads the card's text from the query string.
+
+```npm
+npx shadcn@latest add @takumi/image/og-route
+```
+
+```tsx title="app/og/route.tsx"
+import { ImageResponse } from "takumi-js/response";
+
+import BlogPostTemplate from "@/components/takumi/image/blog-post";
+
+export function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+
+  return new ImageResponse(
+    <BlogPostTemplate
+      author={searchParams.get("author") ?? "Takumi"}
+      category={searchParams.get("category") ?? "Engineering"}
+      date={searchParams.get("date") ?? "Today"}
+      title={searchParams.get("title") ?? "Hello from Takumi"}
+    />,
+    { width: 1200, height: 630 },
+  );
+}
+```
+
+Point a page's Open Graph image at the route.
+
+```tsx title="app/blog/[slug]/page.tsx"
+import type { Metadata } from "next";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+
+  return {
+    openGraph: { images: [`/og?title=${encodeURIComponent(slug)}`] },
+  };
+}
+```
+
+<Callout type="warn">
+  A relative image URL needs `metadataBase` in the root layout's metadata, or `next build` fails.
+</Callout>
+
+```tsx title="app/layout.tsx"
+export const metadata = { metadataBase: new URL("https://example.com") };
+```
+
+The CLI rewrites the `@/` import to the alias in your `components.json`. A project on `~/` gets `~/components/takumi/image/blog-post`. The route is for the Next.js App Router. The shadcn CLI skips it when it cannot detect the framework. In Pages Router, React Router, and Laravel projects it moves the route to another folder, where it does not work as a route.
+
+## Blog Post Template
+
+An article card with a category pill, an oversized title, and an author byline.
+
+![Blog Post Template](/templates/previews/blog-post.svg)
+
+```npm
+npx shadcn@latest add @takumi/image/blog-post
+```
+
+## Docs Template
+
+A documentation page card, tinted by a color you pass and headed by the site's icon.
+
+![Docs Template](/templates/previews/docs.svg)
+
+```npm
+npx shadcn@latest add @takumi/image/docs
+```
+
+## Product Card Template
+
+A product card with its image, name, price, and a line of copy.
+
+![Product Card Template](/templates/previews/product-card.svg)
+
+```npm
+npx shadcn@latest add @takumi/image/product-card
+```
+
+## Event Template
+
+A card for a talk or a conference, with the title above a when, where, and host footer.
+
+![Event Template](/templates/previews/event.svg)
+
+```npm
+npx shadcn@latest add @takumi/image/event
+```
+
+## Quote Template
+
+A high-contrast quote card, attributed to a person and a company.
+
+![Quote Template](/templates/previews/quote.svg)
+
+```npm
+npx shadcn@latest add @takumi/image/quote
+```
+
+## Repository Template
+
+A repository card with its slug, description, and star, fork, and language counts.
+
+![Repository Template](/templates/previews/repository.svg)
+
+```npm
+npx shadcn@latest add @takumi/image/repository
+```
+
+## Changelog Template
+
+A release card with the version, the date, and a summary of what shipped.
+
+![Changelog Template](/templates/previews/changelog.svg)
+
+```npm
+npx shadcn@latest add @takumi/image/changelog
+```

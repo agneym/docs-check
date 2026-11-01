@@ -1,0 +1,49 @@
+{
+  "compiled_at": "2026-11-01T17:34:42.362298+00:00",
+  "questions": 48,
+  "projects": {
+    "react": 12,
+    "nextjs": 12,
+    "tanstack": 12,
+    "takumi": 12
+  },
+  "difficulty": {
+    "easy": 16,
+    "medium": 16,
+    "hard": 16
+  },
+  "categories": {
+    "api-usage": 8,
+    "constraints": 7,
+    "defaults": 8,
+    "debugging": 3,
+    "false-premise": 4,
+    "multi-source": 15,
+    "migration": 3
+  },
+  "multi_file_questions": 15,
+  "evidence_excerpts": 131,
+  "criteria": 130,
+  "snapshot_files_verified": 3944,
+  "snapshot_manifest_sha256": "22270c3d00d0a85932ef4da764e4b73ad5d6cc31a57d7052e71ac0e82a30e009",
+  "drafts_sha256": {
+    "react": "7b3262c160023266fc429702b62e8287065590d5e2aeb077bd5cb8b3c417059b",
+    "nextjs": "773cd9658d697b91e65698f6b16c13933a5d64bc4bd76566736721896373a728",
+    "tanstack": "2a88760a593fb6f6522af6ee30f257b0ed6dedc653eae3cb571b26b6c1023214",
+    "takumi": "735f1cb6c52c84046eaccb33b412202893e47122a1f584f3288b0bacb9c90e4f"
+  },
+  "checks": [
+    "all snapshot file hashes",
+    "required fields and counts",
+    "IDs and scope",
+    "difficulty balance",
+    "citation references",
+    "inclusive line ranges",
+    "verbatim quotes"
+  ],
+  "limitations": [
+    "Automated checks do not establish semantic entailment.",
+    "No application code was executed to test answers.",
+    "Neither Parallel nor Context7 has been queried for this dataset."
+  ]
+}

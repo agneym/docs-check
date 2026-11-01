@@ -1,0 +1,78 @@
+---
+title: Comparison
+description: Compare takumi-pdf, react-pdf, and Puppeteer on recorded invoice benchmarks, bundle size, and tradeoffs to pick a renderer.
+---
+
+This page records one benchmark, an 80-line invoice rendered by three PDF renderers.
+
+<Callout type="info">
+  The numbers hold for the package versions and machine listed here, not for current releases.
+</Callout>
+
+- Each harness uses its renderer's own template language.
+- Geometry, columns, and the embedded font (Inter 400/700) match across harnesses. react-pdf's pt values mirror the other renderers' px values.
+- takumi and Chrome produce the same two-page layout.
+- Warm figures are the median of 20 renders.
+
+The environment is Apple M1 Pro, macOS 15.7.4, Bun 1.3.14, and Chrome 151.
+
+The [bench source](https://github.com/kane50613/takumi/tree/master/example/pdf-bench) now depends on newer package versions. Run `bun bench` there to measure them on your machine.
+
+|                               | takumi-pdf 0.4                              | @react-pdf/renderer 4.5.1                             | Puppeteer + Chrome              |
+| :---------------------------- | :------------------------------------------ | :---------------------------------------------------- | :------------------------------ |
+| Cold start to first PDF       | 176 ms                                      | 495 ms                                                | 0.7–2.8 s                       |
+| Warm render (median)          | 26 ms                                       | 236 ms                                                | 198 ms                          |
+| Output size                   | 19 KB (15 KB with `tagged: false`)          | 16 KB                                                 | 52 KB                           |
+| Deploy needs                  | 1.5 MB gzip wasm                            | pure JS                                               | Chrome install (hundreds of MB) |
+| Template language             | JSX, HTML, node trees with CSS and Tailwind | its own primitives (`<View>`, `<Text>`, `StyleSheet`) | HTML with full CSS              |
+| Selectable text, subset fonts | yes                                         | yes                                                   | yes                             |
+| Arabic and bidi text          | yes                                         | shaping only, manual direction                        | yes                             |
+| Runs on edge runtimes         | yes (Cloudflare Workers)                    | no (Node)                                             | no                              |
+
+## Bundle and install size
+
+These figures come from npm-registry packages bundled with esbuild (`--bundle --minify`, then gzip). Install size comes from a clean `bun add`.
+
+|                           | JS bundle (min+gzip) | wasm (gzip)              | `node_modules`                  |
+| :------------------------ | :------------------- | :----------------------- | :------------------------------ |
+| takumi-pdf 0.4            | 10 KB                | 1.52 MB (1.16 MB brotli) | 4.2 MB, 45 files                |
+| @react-pdf/renderer 4.5.1 | 493 KB               | —                        | 32 MB, 1998 files               |
+| pdf-lib 1.17.1            | 179 KB               | —                        | 26 MB                           |
+| pdfkit 0.19.1             | 253 KB               | —                        | 23 MB                           |
+| jspdf 4.2.1               | 248 KB               | —                        | 59 MB                           |
+| Puppeteer + Chrome        | —                    | —                        | Chrome install (hundreds of MB) |
+
+pdf-lib, pdfkit, and jspdf are drawing libraries, so you position each text line yourself. They are not in the benchmark above.
+
+These figures exclude application code. Measure the complete bundle for your own deployment target.
+
+## Interpret the results
+
+### Puppeteer
+
+- Cold start includes launching a browser process, and it varies with machine state.
+- Chrome's memory spans several processes, which a single-process measurement misses.
+- Chrome is fast once warm, and its CSS support is the most complete of the three.
+
+### react-pdf
+
+- It embeds the same Inter subsets as the other two. Subsetting on every render is most of its warm cost. The 14 standard PDF fonts avoid that cost.
+- Documents use react-pdf's own components, so existing HTML, JSX, and Tailwind markup cannot be reused.
+- It shapes Arabic, but paragraph direction is manual. In this benchmark, the Arabic sample lost its first letter.
+
+### takumi-pdf
+
+- It renders the same components as takumi's image output, unchanged.
+- Its CSS coverage is narrower than Chromium's. PDF output rejects `filter: blur()` and `drop-shadow()`, and does not draw `backdrop-filter`.
+- Blurred `box-shadow` and `text-shadow` are approximated with stepped bands.
+- Tagged output is on by default and added about 4 KB to this invoice. `tagged: false` removes it.
+
+## Choose a renderer
+
+The three renderers differ in what they accept as input.
+
+- Puppeteer uses browser layout and runs page scripts.
+- react-pdf uses its own document components.
+- takumi-pdf takes HTML, JSX, and node trees with its supported CSS.
+
+Run your own documents through the benchmark before you use these timings to plan capacity.

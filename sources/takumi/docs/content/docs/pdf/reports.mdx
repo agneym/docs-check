@@ -1,0 +1,163 @@
+---
+title: Reports & statements
+description: Build a PDF report or statement run with chapters, bookmarks, a table of contents, repeating headers, and long tables.
+---
+
+A report needs chapters that start on fresh pages, bookmarks or a table of contents for navigation, headers that give context on every page, and tables that continue across pages. A statement run adds one more need, which is many documents from one template. Each section below covers one of these, and links to the guide that owns the feature.
+
+## Chapters
+
+`break-before: page` starts a section on a fresh page, and `break-inside: avoid` keeps a figure with its caption. [Pagination](/docs/pdf/pagination) lists every break property.
+
+```tsx twoslash title="Start chapters on new pages"
+declare const chartSvg: string;
+// ---cut---
+import { render } from "takumi-pdf";
+
+const pdf = await render(
+  <article>
+    {/* [!code highlight] */}
+    <section style={{ breakBefore: "page" }}>
+      <h1>Results</h1>
+      {/* [!code highlight] */}
+      <figure style={{ breakInside: "avoid" }}>
+        <img src={chartSvg} alt="Revenue by quarter" style={{ width: 560, height: 360 }} />
+        <figcaption>Revenue by quarter</figcaption>
+      </figure>
+    </section>
+  </article>,
+);
+```
+
+<Callout type="info">
+  `widows` and `orphans` keep a paragraph from splitting into single lines, but they do not keep a
+  heading with the text under it. To do that, wrap the heading and its first paragraph in a
+  `break-inside: avoid` box.
+</Callout>
+
+## Bookmarks
+
+`outline: true` turns `h1`–`h6` into PDF bookmarks, nested by heading depth. Readers jump between chapters from the viewer's sidebar. [Links, outline & metadata](/docs/pdf/links) covers the outline and metadata options.
+
+```tsx twoslash title="Generate chapter bookmarks"
+import type { ReactNode } from "react";
+declare const report: ReactNode;
+// ---cut---
+import { render } from "takumi-pdf";
+
+const pdf = await render(report, {
+  // [!code highlight]
+  outline: true,
+  lang: "en",
+  metadata: { title: "Annual report 2026", authors: ["Acme Inc."] },
+});
+```
+
+For a table of contents, link each chapter by its `id`. Here `chapters` is your list of `{ id, title }` entries, and `<TargetPageNumber />` fills in the page each link points to:
+
+```tsx twoslash title="Build a table of contents"
+declare const chapters: { id: string; title: string }[];
+// ---cut---
+import { TargetPageNumber } from "takumi-pdf/primitives";
+
+<nav tw="flex flex-col gap-1 text-sm">
+  {chapters.map((chapter) => (
+    <a key={chapter.id} href={`#${chapter.id}`} tw="flex items-baseline gap-2">
+      <span>{chapter.title}</span>
+      <span tw="flex-1 border-b border-dotted border-gray-300" />
+      {/* [!code highlight] */}
+      <TargetPageNumber tw="w-8 shrink-0 text-right" />
+    </a>
+  ))}
+</nav>;
+```
+
+Each entry stays clickable, so the contents page works on screen as well as in print. Give the number a fixed width, or a two-digit page can rewrap the entry and renumber it. See [Table of contents](/docs/pdf/links#table-of-contents).
+
+## Running bands
+
+A report header usually names the document and the period, and the footer carries the page counter.
+
+```tsx twoslash title="Repeat a report header"
+import type { ReactNode } from "react";
+declare const report: ReactNode;
+// ---cut---
+import { render } from "takumi-pdf";
+import { PageNumber, TotalPages } from "takumi-pdf/primitives";
+
+const pdf = await render(report, {
+  // [!code highlight]
+  header: (
+    <div tw="flex w-full justify-between px-12 text-[10px] text-gray-500">
+      <span>Annual report 2026</span>
+      <span>Acme Inc.</span>
+    </div>
+  ),
+  // [!code highlight]
+  footer: (
+    <div tw="flex w-full justify-center text-[10px] text-gray-500">
+      <PageNumber /> / <TotalPages />
+    </div>
+  ),
+  margin: { top: 64, bottom: 64, left: 48, right: 48 },
+});
+```
+
+Bands draw in the margin, so a numeric margin has to fit them. Leave `margin` unset to fit them automatically, or see [Sizing the margin](/docs/pdf/headers#sizing-the-margin).
+
+## Long tables
+
+Use `<table>` markup. Rows break between pages, and columns keep the same positions on every page. A `<thead>` [that qualifies](/docs/pdf/pagination#repeated-table-headers-and-footers) repeats at the top of each continuation page, and a `<tfoot>` below the last row of each page the table breaks across:
+
+```tsx twoslash title="Repeat table headers"
+declare const rows: { id: string; label: string; amount: string }[];
+// ---cut---
+import "takumi-pdf";
+
+<table tw="w-full text-xs">
+  {/* [!code highlight] */}
+  <thead>
+    <tr>
+      <th tw="text-left">Item</th>
+      <th tw="text-right">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    {rows.map((row) => (
+      <tr key={row.id}>
+        <td>{row.label}</td>
+        <td tw="text-right">{row.amount}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>;
+```
+
+Tagged output maps the markup to `Table`, `TR`, `TH`, and `TD` structure elements, so screen readers navigate by row and column. See [Tables](/docs/tables) for layout coverage and [PDF/A & PDF/UA](/docs/pdf/conformance#tables) for the structure tree.
+
+## Batches
+
+A statement run renders the same template many times. Create one `PdfRenderer` and reuse it, so each font loads once for the whole batch. Here `accounts` holds your records, `Statement` is your template, and `save(id, pdf)` stores each result:
+
+```tsx twoslash title="Render a batch of statements"
+import type { ReactNode } from "react";
+declare const accounts: { id: string }[];
+declare function Statement(props: { account: (typeof accounts)[number] }): ReactNode;
+declare function save(id: string, pdf: Uint8Array): Promise<void>;
+// ---cut---
+import { PdfRenderer } from "takumi-pdf";
+import { googleFonts } from "@takumi-rs/helpers";
+
+// [!code highlight]
+const renderer = new PdfRenderer();
+const fonts = await googleFonts(["Inter"]);
+
+for (const account of accounts) {
+  const pdf = await renderer.render(<Statement account={account} />, { fonts });
+  await save(account.id, pdf);
+}
+```
+
+## Accessibility
+
+Set `tagged: "ua1"` to validate against PDF/UA-1. Supply `lang` and `metadata.title`, then review heading order, tables, and chart descriptions yourself. See [PDF/A & PDF/UA](/docs/pdf/conformance#required-inputs).

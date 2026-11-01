@@ -1,0 +1,3688 @@
+[
+  {
+    "id": "react-01",
+    "project": "react",
+    "product": "React",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, how does a useState initializer function differ from a function passed to its setter?",
+    "reference_answer": "The initializer is pure, takes no arguments, and supplies initial state; it is ignored after initial render [e1]. A setter function is a pure updater receiving pending state; React queues it and applies queued updaters on the next render [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Initializer is pure, takes no arguments, and its result initializes state; initialState is ignored after initial render.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Setter updater is pure, receives pending state and is queued for the next render.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Both functions run on every render.",
+        "correction": "The initializer is used for initialization and the updater is queued for the next render.",
+        "evidence_ids": [
+          "e1",
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useState.md",
+        "start_line": 41,
+        "end_line": 42,
+        "quote": "* `initialState`: The value you want the state to be initially. It can be a value of any type, but there is a special behavior for functions. This argument is ignored after the initial render.\n  * If you pass a function as `initialState`, it will be treated as an _initializer function_. It should be pure, should take no arguments, and should return a value of any type. React will call your initializer function when initializing the component, and store its return value as the initial state. [See an example below.](#avoiding-recreating-the-initial-state)",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "4669baf4a2ded8406cc9b13738c395ea6a71766c552424f0a83285acb928f4e7",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useState.md#L41-L42"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useState.md",
+        "start_line": 74,
+        "end_line": 74,
+        "quote": "  * If you pass a function as `nextState`, it will be treated as an _updater function_. It must be pure, should take the pending state as its only argument, and should return the next state. React will put your updater function in a queue and re-render your component. During the next render, React will calculate the next state by applying all of the queued updaters to the previous state. [See an example below.](#updating-state-based-on-the-previous-state)",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "4669baf4a2ded8406cc9b13738c395ea6a71766c552424f0a83285acb928f4e7",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useState.md#L74-L74"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "react-02",
+    "project": "react",
+    "product": "React",
+    "category": "constraints",
+    "difficulty": "easy",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, when should a component use a ref instead of state for an interval ID, and what render-time restriction applies?",
+    "reference_answer": "A ref retains the same object across renders, and changing current does not trigger a render, making it appropriate for an interval ID not used for visual output [e1][e2]. Do not read or write current during rendering except for initialization [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The ref object is retained across renders.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Changing current does not trigger a render; refs suit information like an interval ID that does not affect visual output.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Do not read or write current during render except for initialization.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Changing a ref causes a render.",
+        "correction": "Changing ref.current does not cause React to re-render.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useRef.md",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "On the next renders, `useRef` will return the same object.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "99f33fa0551558fbb8b9feb2062cb58e4d10749ac48c8a5ca0c56863794c00f6",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useRef.md#L46-L46"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useRef.md",
+        "start_line": 75,
+        "end_line": 75,
+        "quote": "**Changing a ref does not trigger a re-render.** This means refs are perfect for storing information that doesn't affect the visual output of your component. For example, if you need to store an [interval ID](https://developer.mozilla.org/en-US/docs/Web/API/setInterval) and retrieve it later, you can put it in a ref. To update the value inside the ref, you need to manually change its <CodeStep step={2}>`current` property</CodeStep>:",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "99f33fa0551558fbb8b9feb2062cb58e4d10749ac48c8a5ca0c56863794c00f6",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useRef.md#L75-L75"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useRef.md",
+        "start_line": 52,
+        "end_line": 52,
+        "quote": "* Do not write _or read_ `ref.current` during rendering, except for [initialization.](#avoiding-recreating-the-ref-contents) This makes your component's behavior unpredictable.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "99f33fa0551558fbb8b9feb2062cb58e4d10749ac48c8a5ca0c56863794c00f6",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useRef.md#L52-L52"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "react-03",
+    "project": "react",
+    "product": "React",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, how does useContext choose a value when there is or is not a provider above the reader? Can a provider returned by that same reader affect it?",
+    "reference_answer": "The nearest provider above supplies its value; without one, useContext returns createContext’s default value [e1]. A provider returned by the reader itself cannot affect that call; it must be above the reader [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The nearest provider above supplies the value, or createContext defaultValue if none exists.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "A provider returned by the same component does not affect its useContext call.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A provider returned by the reader wraps and affects its own useContext call.",
+        "correction": "The provider must be above the calling component.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useContext.md",
+        "start_line": 41,
+        "end_line": 41,
+        "quote": "`useContext` returns the context value for the calling component. It is determined as the `value` passed to the closest `SomeContext` above the calling component in the tree. If there is no such provider, then the returned value will be the `defaultValue` you have passed to [`createContext`](/reference/react/createContext) for that context. The returned value is always up-to-date. React automatically re-renders components that read some context if it changes.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "915213060927b651d832cd11d17fdaf935b54138a8c75905a32ccd8641c00373",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useContext.md#L41-L41"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useContext.md",
+        "start_line": 45,
+        "end_line": 45,
+        "quote": "* `useContext()` call in a component is not affected by providers returned from the *same* component. The corresponding `<Context>` **needs to be *above*** the component doing the `useContext()` call.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "915213060927b651d832cd11d17fdaf935b54138a8c75905a32ccd8641c00373",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useContext.md#L45-L45"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "react-04",
+    "project": "react",
+    "product": "React",
+    "category": "constraints",
+    "difficulty": "easy",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, what is useId intended to provide, and can it generate list keys or use() cache keys?",
+    "reference_answer": "useId returns a unique ID string associated with the particular call and component [e1], useful for accessibility attributes [e2]. Do not use it for list keys or use() cache keys; generate these from data [e3][e4].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Returns a unique ID string associated with the call and component.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Can supply IDs for accessibility attributes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Do not use it for list keys; keys should come from data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      },
+      {
+        "id": "c4",
+        "description": "Do not use it for use() cache keys; derive cache keys from data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "useId is the recommended source of list keys.",
+        "correction": "List keys should be generated from the data.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useId.md",
+        "start_line": 41,
+        "end_line": 41,
+        "quote": "`useId` returns a unique ID string associated with this particular `useId` call in this particular component.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "7f8f384552f236e84a49b4f09a15759b4cb5c517a46c205953200cd8ba909067",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useId.md#L41-L41"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useId.md",
+        "start_line": 7,
+        "end_line": 7,
+        "quote": "`useId` is a React Hook for generating unique IDs that can be passed to accessibility attributes.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "7f8f384552f236e84a49b4f09a15759b4cb5c517a46c205953200cd8ba909067",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useId.md#L7-L7"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useId.md",
+        "start_line": 49,
+        "end_line": 49,
+        "quote": "* `useId` **should not be used to generate keys** in a list. [Keys should be generated from your data.](/learn/rendering-lists#where-to-get-your-key)",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "7f8f384552f236e84a49b4f09a15759b4cb5c517a46c205953200cd8ba909067",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useId.md#L49-L49"
+      },
+      {
+        "id": "e4",
+        "path": "sources/react/src/content/reference/react/useId.md",
+        "start_line": 47,
+        "end_line": 47,
+        "quote": "* `useId` **should not be used to generate cache keys** for [use()](/reference/react/use). The ID is stable when a component is mounted but may change during rendering. Cache keys should be generated from your data.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "7f8f384552f236e84a49b4f09a15759b4cb5c517a46c205953200cd8ba909067",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useId.md#L47-L47"
+      }
+    ],
+    "max_points": 4
+  },
+  {
+    "id": "react-05",
+    "project": "react",
+    "product": "React",
+    "category": "debugging",
+    "difficulty": "medium",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "A React Effect connects to a service using a room prop, with Strict Mode enabled at the root. What happens on a changed dependency and unmount, and why can an extra connection cycle occur in development?",
+    "reference_answer": "After a commit with changed dependencies, React runs the old cleanup before the new setup; on removal it runs cleanup [e1]. Root-level Strict Mode adds a development-only setup/cleanup cycle as a cleanup stress test; implement cleanup that mirrors setup [e2]. If Strict Mode is not enabled at the root, React does not re-run Effects an extra time on initial mount [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "On changed dependencies, old cleanup runs before new setup; cleanup also runs on removal.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Root-level Strict Mode adds a development-only setup and cleanup cycle before real setup to stress-test cleanup.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2",
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "The extra cycle proves production always reconnects twice.",
+        "correction": "The extra Strict Mode cycle is development-only.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useEffect.md",
+        "start_line": 47,
+        "end_line": 47,
+        "quote": "* `setup`: The function with your Effect's logic. Your setup function may also optionally return a *cleanup* function. When your [component commits](/learn/render-and-commit#step-3-react-commits-changes-to-the-dom), React will run your setup function. After every commit with changed dependencies, React will first run the cleanup function (if you provided it) with the old values, and then run your setup function with the new values. After your component is removed from the DOM, React will run your cleanup function.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "d4fd102c75df4194f5fa4eae8387f3a0aa7b4ba773c3a5ba29e41bf997a61cdb",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useEffect.md#L47-L47"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useEffect.md",
+        "start_line": 61,
+        "end_line": 61,
+        "quote": "* When Strict Mode is on, React will **run one extra development-only setup+cleanup cycle** before the first real setup. This is a stress-test that ensures that your cleanup logic \"mirrors\" your setup logic and that it stops or undoes whatever the setup is doing. If this causes a problem, [implement the cleanup function.](/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development)",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "d4fd102c75df4194f5fa4eae8387f3a0aa7b4ba773c3a5ba29e41bf997a61cdb",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useEffect.md#L61-L61"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/StrictMode.md",
+        "start_line": 127,
+        "end_line": 127,
+        "quote": "When `StrictMode` is enabled for a part of the app, React will only enable behaviors that are possible in production. For example, if `<StrictMode>` is not enabled at the root of the app, it will not [re-run Effects an extra time](#fixing-bugs-found-by-re-running-effects-in-development) on initial mount, since this would cause child effects to double fire without the parent effects, which cannot happen in production.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "2edaa1f6154e074805ffe9303505cce24e317092bd0ad2003a37463d188df3a3",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/StrictMode.md#L127-L127"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "react-06",
+    "project": "react",
+    "product": "React",
+    "category": "false-premise",
+    "difficulty": "medium",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, all APIs named use are Hooks and must never be called conditionally. Is that true for use(promise), and how are its pending and rejected states handled?",
+    "reference_answer": "No. use(promise) is not a Hook and can be called in loops and conditions, though it must be inside a component or Hook [e1][e2]. A pending promise suspends and shows a surrounding Suspense fallback; rejection shows the nearest Error Boundary fallback [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "use(promise) is not a Hook and can be called in loops and conditions.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "use must be called inside a component or Hook.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Pending promises suspend to Suspense fallback; rejected promises go to the nearest Error Boundary.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "use(promise) must always be at the top level like useState.",
+        "correction": "Unlike Hooks, use can be called in conditions and loops.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/use.md",
+        "start_line": 52,
+        "end_line": 52,
+        "quote": "Call `use` with a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) to read its resolved value. The component calling `use` *suspends* while the Promise is pending. Despite its name, `use` is not a Hook. Unlike Hooks, it can be called inside loops and conditional statements like `if`.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "997072a8d6d3f715b90672f082a1c4d53c34ade78262e407c86201d803d4b280",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/use.md#L52-L52"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/use.md",
+        "start_line": 45,
+        "end_line": 45,
+        "quote": "* `use` must be called inside a Component or a Hook.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "997072a8d6d3f715b90672f082a1c4d53c34ade78262e407c86201d803d4b280",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/use.md#L45-L45"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/use.md",
+        "start_line": 62,
+        "end_line": 62,
+        "quote": "If the component that calls `use` is wrapped in a [Suspense](/reference/react/Suspense) boundary, the fallback will be displayed while the Promise is pending. Once the Promise is resolved, the Suspense fallback is replaced by the rendered components using the data returned by `use`. If the Promise is rejected, the fallback of the nearest [Error Boundary](/reference/react/Component#catching-rendering-errors-with-an-error-boundary) will be displayed.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "997072a8d6d3f715b90672f082a1c4d53c34ade78262e407c86201d803d4b280",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/use.md#L62-L62"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "react-07",
+    "project": "react",
+    "product": "React",
+    "category": "multi-source",
+    "difficulty": "medium",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "A React component stores fullName derived from firstName and lastName in state and updates it with an Effect. What does React recommend instead, and when is an Effect appropriate?",
+    "reference_answer": "Calculate fullName during rendering instead of keeping redundant state and an Effect [e1]. An immediate state update in an Effect causes an unnecessary extra render pass [e2]. Effects are appropriate for synchronization with external systems [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Calculate the value from existing state during rendering rather than storing redundant state.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "An immediate Effect state update causes unnecessary extra render work.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Effects are for synchronization with external systems.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Derived values should always be copied into state with an Effect.",
+        "correction": "Calculate values derivable from state during rendering.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/learn/you-might-not-need-an-effect.md",
+        "start_line": 63,
+        "end_line": 63,
+        "quote": "**When something can be calculated from the existing props or state, [don't put it in state.](/learn/choosing-the-state-structure#avoid-redundant-state) Instead, calculate it during rendering.** This makes your code faster (you avoid the extra \"cascading\" updates), simpler (you remove some code), and less error-prone (you avoid bugs caused by different state variables getting out of sync with each other). If this approach feels new to you, [Thinking in React](/learn/thinking-in-react#step-3-find-the-minimal-but-complete-representation-of-ui-state) explains what should go into state.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "fdfe964a7819e6e22f52c110225726f2cb5b9a46c6ca245173283da0cbfd5a0c",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/learn/you-might-not-need-an-effect.md#L63-L63"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/learn/you-might-not-need-an-effect.md",
+        "start_line": 26,
+        "end_line": 26,
+        "quote": "* **You don't need Effects to transform data for rendering.** For example, let's say you want to filter a list before displaying it. You might feel tempted to write an Effect that updates a state variable when the list changes. However, this is inefficient. When you update the state, React will first call your component functions to calculate what should be on the screen. Then React will [\"commit\"](/learn/render-and-commit) these changes to the DOM, updating the screen. Then React will run your Effects. If your Effect *also* immediately updates the state, this restarts the whole process from scratch! To avoid the unnecessary render passes, transform all the data at the top level of your components. That code will automatically re-run whenever your props or state change.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "fdfe964a7819e6e22f52c110225726f2cb5b9a46c6ca245173283da0cbfd5a0c",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/learn/you-might-not-need-an-effect.md#L26-L26"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useEffect.md",
+        "start_line": 7,
+        "end_line": 7,
+        "quote": "`useEffect` is a React Hook that lets you [synchronize a component with an external system.](/learn/synchronizing-with-effects)",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "d4fd102c75df4194f5fa4eae8387f3a0aa7b4ba773c3a5ba29e41bf997a61cdb",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useEffect.md#L7-L7"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "react-08",
+    "project": "react",
+    "product": "React",
+    "category": "api-usage",
+    "difficulty": "medium",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "How does React useActionState handle multiple dispatches, and where must dispatchAction be invoked?",
+    "reference_answer": "The action receives previous state followed by the payload [e1]. Dispatches are queued and executed sequentially, each receiving the previous result [e2]. Dispatch inside an Action, for example using startTransition or an Action prop [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The action receives previous state followed by the dispatch payload.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Multiple dispatches are executed sequentially, passing the previous result as state.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Dispatch must be called inside an Action, such as startTransition or an Action prop.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Multiple dispatches always execute in parallel.",
+        "correction": "React queues and executes them sequentially.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useActionState.md",
+        "start_line": 42,
+        "end_line": 42,
+        "quote": "* `reducerAction`: The function to be called when the Action is triggered. When called, it receives the previous state (initially the `initialState` you provided, then its previous return value) as its first argument, followed by the `actionPayload` passed to `dispatchAction`.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "73b57ece4abe4d4e65822b42b79c3f4bd1871a8ee354b96c90e11047cf9279c5",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useActionState.md#L42-L42"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useActionState.md",
+        "start_line": 59,
+        "end_line": 59,
+        "quote": "* React queues and executes multiple calls to `dispatchAction` sequentially. Each call to `reducerAction` receives the result of the previous call.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "73b57ece4abe4d4e65822b42b79c3f4bd1871a8ee354b96c90e11047cf9279c5",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useActionState.md#L59-L59"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useActionState.md",
+        "start_line": 70,
+        "end_line": 70,
+        "quote": "You can wrap it in [`startTransition`](/reference/react/startTransition), or pass it to an [Action prop](/reference/react/useTransition#exposing-action-props-from-components). Calls outside that scope won’t be treated as part of the Transition and [log an error](#async-function-outside-transition) on development mode.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "73b57ece4abe4d4e65822b42b79c3f4bd1871a8ee354b96c90e11047cf9279c5",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useActionState.md#L70-L70"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "react-09",
+    "project": "react",
+    "product": "React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, how should an optimistic state update and an asynchronous final state update be marked when using a Transition, including after await?",
+    "reference_answer": "Call the useOptimistic setter inside an Action [e1]. Currently state setters after await need another startTransition to be marked as Transitions [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The optimistic setter must be called inside an Action.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "State setters after await require another startTransition to be marked as Transitions.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "All setters after await automatically remain marked as Transition updates.",
+        "correction": "Currently, wrap setters after await in another startTransition.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useOptimistic.md",
+        "start_line": 80,
+        "end_line": 80,
+        "quote": "* The `set` function must be called inside an [Action](reference/react/useTransition#functions-called-in-starttransition-are-called-actions). If you call the setter outside an Action, [React will show a warning](#an-optimistic-state-update-occurred-outside-a-transition-or-action) and the optimistic state will briefly render.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "e54c63a6c335b70c762f51e892d00962b6c0a285046a32a1268deeb9008c02f1",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useOptimistic.md#L80-L80"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useTransition.md",
+        "start_line": 98,
+        "end_line": 98,
+        "quote": "* `action`: A function that updates some state by calling one or more [`set` functions](/reference/react/useState#setstate). React calls `action` immediately with no parameters and marks all state updates scheduled synchronously during the `action` function call as Transitions. Any async calls that are awaited in the `action` will be included in the Transition, but currently require wrapping any `set` functions after the `await` in an additional `startTransition` (see [Troubleshooting](#react-doesnt-treat-my-state-update-after-await-as-a-transition)). State updates marked as Transitions will be [non-blocking](#perform-non-blocking-updates-with-actions) and [will not display unwanted loading indicators](#preventing-unwanted-loading-indicators).",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "32f9ed969ea61b54243ba8f5ad7d76a1264fba5b7e3ea39b73973f3577e83d3f",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useTransition.md#L98-L98"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "react-10",
+    "project": "react",
+    "product": "React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "A React app reads a mutable external store during a non-blocking Transition. What snapshot rules apply, and what happens if the store changes before the DOM update?",
+    "reference_answer": "getSnapshot must return the same value while the store is unchanged; React compares using Object.is [e1]. Snapshots must be immutable: cache the last snapshot until the mutable data changes, then return a new immutable snapshot [e2]. During a Transition React checks again before DOM changes and restarts as blocking if the snapshot differs [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Repeated getSnapshot calls return the same value while unchanged, compared using Object.is.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Snapshots are immutable; cache unchanged snapshots and replace when data changes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "React checks again before DOM changes and restarts the Transition update as blocking if the snapshot changed.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A changed external store snapshot is committed as a non-blocking Transition without rechecking.",
+        "correction": "React rechecks and restarts as blocking if the snapshot changed.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "* `getSnapshot`: A function that returns a snapshot of the data in the store that's needed by the component. While the store has not changed, repeated calls to `getSnapshot` must return the same value. If the store changes and the returned value is different (as compared by [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)), React re-renders the component.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "f4965c80f5655fa6f6fb222adeb42d5c5710a4cd17dabf62562650d694f1781e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useSyncExternalStore.md#L46-L46"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 56,
+        "end_line": 56,
+        "quote": "* The store snapshot returned by `getSnapshot` must be immutable. If the underlying store has mutable data, return a new immutable snapshot if the data has changed. Otherwise, return a cached last snapshot.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "f4965c80f5655fa6f6fb222adeb42d5c5710a4cd17dabf62562650d694f1781e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useSyncExternalStore.md#L56-L56"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 60,
+        "end_line": 60,
+        "quote": "* If the store is mutated during a [non-blocking Transition update](/reference/react/useTransition), React will fall back to performing that update as blocking. Specifically, for every Transition update, React will call `getSnapshot` a second time just before applying changes to the DOM. If it returns a different value than when it was called originally, React will restart the update from scratch, this time applying it as a blocking update, to ensure that every component on screen is reflecting the same version of the store.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "f4965c80f5655fa6f6fb222adeb42d5c5710a4cd17dabf62562650d694f1781e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useSyncExternalStore.md#L60-L60"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "react-11",
+    "project": "react",
+    "product": "React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "A React chat component receives roomId and theme. Assume serverUrl is a module-level constant and the service helpers are imported. Repair this code so theme changes do not reconnect, roomId changes still reconnect, and connected notifications read the latest committed theme. Show the corrected component and React imports without suppressing dependency linting.\n\n```jsx\nfunction ChatRoom({ roomId, theme }) {\n  useEffect(() => {\n    const connection = createConnection(serverUrl, roomId);\n    connection.on('connected', () => {\n      showNotification('Connected!', theme);\n    });\n    connection.connect();\n    return () => connection.disconnect();\n  }, [roomId, theme]);\n  return null;\n}\n```",
+    "reference_answer": "Separate the connected notification into an Effect Event, whose callback reads the latest committed theme without making the connection Effect reactive to theme [e1][e2]. Keep roomId reactive and preserve connection setup and cleanup; omit the Effect Event from dependencies [e3][e4].\n\n```jsx\nimport { useEffect, useEffectEvent } from 'react';\n\nfunction ChatRoom({ roomId, theme }) {\n  const onConnected = useEffectEvent(() => {\n    showNotification('Connected!', theme);\n  });\n\n  useEffect(() => {\n    const connection = createConnection(serverUrl, roomId);\n    connection.on('connected', () => {\n      onConnected();\n    });\n    connection.connect();\n    return () => connection.disconnect();\n  }, [roomId]);\n\n  return null;\n}\n```\n\nThis extracts a genuinely non-reactive event, not the room-dependent connection itself. Accept other documented implementations that meet the same lifecycle, freshness, and linting requirements; the exact helper name or code formatting is not required.",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Shows corrected code, including the necessary React imports, that separates the notification from connection reactivity while reading the latest committed theme; useEffectEvent is the reference implementation, not a required spelling for a valid documented alternative.",
+        "weight": 2,
+        "evidence_ids": [
+          "e1",
+          "e2",
+          "e3"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "The connection Effect remains reactive to roomId but not theme, without lint suppression; if using an Effect Event, omit it from the dependency array.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3",
+          "e4"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Preserves the connected listener, connection setup, and disconnect cleanup so room changes reconnect and removal disconnects.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Simply delete theme from the dependencies while leaving the notification callback unchanged.",
+        "correction": "That leaves a reactive theme read inside the Effect; extract the notification into an Effect Event so it sees the latest committed theme without reconnecting.",
+        "evidence_ids": [
+          "e1",
+          "e2",
+          "e3"
+        ]
+      },
+      {
+        "claim": "Move the entire connection setup into an Effect Event and remove roomId from dependencies.",
+        "correction": "The room-dependent connection must stay reactive; only the connected notification is non-reactive.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useEffectEvent.md",
+        "start_line": 41,
+        "end_line": 41,
+        "quote": "* `callback`: A function containing the logic for your Effect Event. The function can accept any number of arguments and return any value. When you call the returned Effect Event function, the `callback` always accesses the latest committed values from render at the time of the call.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "6ca99cfea423a2aa26801f801b83de57c61c81741e3a739fb9ca2721a4714d1d",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useEffectEvent.md#L41-L41"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/learn/separating-events-from-effects.md",
+        "start_line": 406,
+        "end_line": 412,
+        "quote": "import { useEffect, useEffectEvent } from 'react';\n\nfunction ChatRoom({ roomId, theme }) {\n  const onConnected = useEffectEvent(() => {\n    showNotification('Connected!', theme);\n  });",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "0754d3d3efd767594159e1d7214bcffd3e3903c2e340d80777886ecd3ab0994e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/learn/separating-events-from-effects.md#L406-L412"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/learn/separating-events-from-effects.md",
+        "start_line": 420,
+        "end_line": 432,
+        "quote": "function ChatRoom({ roomId, theme }) {\n  const onConnected = useEffectEvent(() => {\n    showNotification('Connected!', theme);\n  });\n\n  useEffect(() => {\n    const connection = createConnection(serverUrl, roomId);\n    connection.on('connected', () => {\n      onConnected();\n    });\n    connection.connect();\n    return () => connection.disconnect();\n  }, [roomId]); // ✅ All dependencies declared",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "0754d3d3efd767594159e1d7214bcffd3e3903c2e340d80777886ecd3ab0994e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/learn/separating-events-from-effects.md#L420-L432"
+      },
+      {
+        "id": "e4",
+        "path": "sources/react/src/content/learn/separating-events-from-effects.md",
+        "start_line": 436,
+        "end_line": 436,
+        "quote": "This solves the problem. Note that you had to *remove* `theme` from the list of your Effect's dependencies, because it's no longer used in the Effect. You also don't need to *add* `onConnected` to it, because **Effect Events are not reactive and must be omitted from dependencies.**",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "0754d3d3efd767594159e1d7214bcffd3e3903c2e340d80777886ecd3ab0994e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/learn/separating-events-from-effects.md#L436-L436"
+      }
+    ],
+    "max_points": 4
+  },
+  {
+    "id": "react-12",
+    "project": "react",
+    "product": "React",
+    "category": "constraints",
+    "difficulty": "hard",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "For a server-rendered React component subscribing with useSyncExternalStore, what must be provided for hydration, and how should subscription and snapshots behave across renders?",
+    "reference_answer": "Provide getServerSnapshot for server rendering and hydration; its result must match between server and client, and omitting it makes server rendering throw [e1]. subscribe receives a callback and returns cleanup; a different subscribe function causes resubscription [e2][e3]. getSnapshot must return the same value while unchanged, and immutable snapshots should be cached until data changes [e4][e5].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "getServerSnapshot is used for server rendering and hydration; it must match between server and client, and omission causes server rendering to throw.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "subscribe receives a callback and returns a cleanup function.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Changing subscribe identity causes resubscription.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      },
+      {
+        "id": "c4",
+        "description": "getSnapshot returns the same value while the store is unchanged.",
+        "weight": 1,
+        "evidence_ids": [
+          "e4"
+        ]
+      },
+      {
+        "id": "c5",
+        "description": "Snapshots must be immutable, with a new immutable snapshot when underlying mutable data changes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e5"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "getServerSnapshot may be omitted during server rendering.",
+        "correction": "If omitted, server rendering the component throws.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 48,
+        "end_line": 48,
+        "quote": "* **optional** `getServerSnapshot`: A function that returns the initial snapshot of the data in the store. It will be used only during server rendering and during hydration of server-rendered content on the client. The server snapshot must be the same between the client and the server, and is usually serialized and passed from the server to the client. If you omit this argument, rendering the component on the server will throw an error.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "f4965c80f5655fa6f6fb222adeb42d5c5710a4cd17dabf62562650d694f1781e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useSyncExternalStore.md#L48-L48"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 44,
+        "end_line": 44,
+        "quote": "* `subscribe`: A function that takes a single `callback` argument and subscribes it to the store. When the store changes, it should invoke the provided `callback`, which will cause React to re-call `getSnapshot` and (if needed) re-render the component. The `subscribe` function should return a function that cleans up the subscription.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "f4965c80f5655fa6f6fb222adeb42d5c5710a4cd17dabf62562650d694f1781e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useSyncExternalStore.md#L44-L44"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 58,
+        "end_line": 58,
+        "quote": "* If a different `subscribe` function is passed during a re-render, React will re-subscribe to the store using the newly passed `subscribe` function. You can prevent this by declaring `subscribe` outside the component.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "f4965c80f5655fa6f6fb222adeb42d5c5710a4cd17dabf62562650d694f1781e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useSyncExternalStore.md#L58-L58"
+      },
+      {
+        "id": "e4",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "* `getSnapshot`: A function that returns a snapshot of the data in the store that's needed by the component. While the store has not changed, repeated calls to `getSnapshot` must return the same value. If the store changes and the returned value is different (as compared by [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)), React re-renders the component.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "f4965c80f5655fa6f6fb222adeb42d5c5710a4cd17dabf62562650d694f1781e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useSyncExternalStore.md#L46-L46"
+      },
+      {
+        "id": "e5",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 56,
+        "end_line": 56,
+        "quote": "* The store snapshot returned by `getSnapshot` must be immutable. If the underlying store has mutable data, return a new immutable snapshot if the data has changed. Otherwise, return a cached last snapshot.",
+        "source_id": "react",
+        "source_commit": "0821e7d9428a6c58c922765b891bbffba9ed6249",
+        "file_sha256": "f4965c80f5655fa6f6fb222adeb42d5c5710a4cd17dabf62562650d694f1781e",
+        "source_url": "https://github.com/reactjs/react.dev/blob/0821e7d9428a6c58c922765b891bbffba9ed6249/src/content/reference/react/useSyncExternalStore.md#L56-L56"
+      }
+    ],
+    "max_points": 5
+  },
+  {
+    "id": "nextjs-01",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, what is the default caching behavior for Route Handlers, and which methods can opt into caching when Cache Components is disabled?",
+    "reference_answer": "Route Handlers are not cached by default; GET can opt into caching, for example with force-static. [e1] Other supported methods are not cached even alongside a cached GET. [e2]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Route Handlers are not cached by default; GET can opt into caching, for example with force-static.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Other supported methods are not cached even alongside a cached GET.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "All handler methods are cached automatically.",
+        "correction": "Route Handlers are not cached by default; GET can opt into caching, for example with force-static.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 51,
+        "end_line": 51,
+        "quote": "Route Handlers are not cached by default. You can, however, opt into caching for `GET` methods. Other supported HTTP methods are **not** cached. To cache a `GET` method, use a [route config option](/docs/app/guides/caching-without-cache-components#dynamic) such as `export const dynamic = 'force-static'` in your Route Handler file.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "765cccdd91d78ffc971e0f4964ad5aacfc49b8df77bc86159e8d6ab51f11c143",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/15-route-handlers.mdx#L51-L51"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 85,
+        "end_line": 85,
+        "quote": "> **Good to know**: Other supported HTTP methods are **not** cached, even if they are placed alongside a `GET` method that is cached, in the same file.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "765cccdd91d78ffc971e0f4964ad5aacfc49b8df77bc86159e8d6ab51f11c143",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/15-route-handlers.mdx#L85-L85"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "nextjs-02",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, how do I access request cookies in a Server Component, and where can I set them?",
+    "reference_answer": "Import cookies from next/headers and await it to read incoming cookies in a Server Component; Server Functions and Route Handlers can read and write cookies. [e1] Do not set cookies during Server Component rendering; invoke a Server Function from the client or use a Route Handler. [e2]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Import cookies from next/headers and await it to read incoming cookies in a Server Component; Server Functions and Route Handlers can read and write cookies.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Do not set cookies during Server Component rendering; invoke a Server Function from the client or use a Route Handler.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Cookies can be set while rendering a Server Component.",
+        "correction": "Setting cookies is not supported during Server Component rendering; invoke a Server Function from the client or use a Route Handler.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/cookies.mdx",
+        "start_line": 6,
+        "end_line": 10,
+        "quote": "`cookies` is an **async** function that allows you to read the HTTP incoming request cookies in [Server Components](/docs/app/getting-started/server-and-client-components), and read/write outgoing request cookies in [Server Functions](/docs/app/getting-started/mutating-data) or [Route Handlers](/docs/app/api-reference/file-conventions/route).",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "f474ad3776772829116dd50c752dff267e1f29e38244071f461bb2a8c9a1da9b",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/cookies.mdx#L6-L10"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/cookies.mdx",
+        "start_line": 81,
+        "end_line": 81,
+        "quote": "- **Setting cookies** is not supported during Server Component rendering. To modify cookies, invoke a Server Function from the client or use a Route Handler.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "f474ad3776772829116dd50c752dff267e1f29e38244071f461bb2a8c9a1da9b",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/cookies.mdx#L81-L81"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "nextjs-03",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "constraints",
+    "difficulty": "easy",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, where should I define a Route Handler, and can it share a segment with a page?",
+    "reference_answer": "Define it in a route.js or route.ts file inside app. [e1] A route.js and page.js cannot be at the same route segment level. [e2]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Define it in a route.js or route.ts file inside app.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "A route.js and page.js cannot be at the same route segment level.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A page and route handler may coexist at the same segment.",
+        "correction": "A route.js and page.js cannot be at the same route segment level.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 29,
+        "end_line": 29,
+        "quote": "Route Handlers are defined in a [`route.js|ts` file](/docs/app/api-reference/file-conventions/route) inside the `app` directory:",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "765cccdd91d78ffc971e0f4964ad5aacfc49b8df77bc86159e8d6ab51f11c143",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/15-route-handlers.mdx#L29-L29"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 39,
+        "end_line": 39,
+        "quote": "Route Handlers can be nested anywhere inside the `app` directory, similar to `page.js` and `layout.js`. But there **cannot** be a `route.js` file at the same route segment level as `page.js`.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "765cccdd91d78ffc971e0f4964ad5aacfc49b8df77bc86159e8d6ab51f11c143",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/15-route-handlers.mdx#L39-L39"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "nextjs-04",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, which component type are pages and layouts by default, and when would I use a Client Component?",
+    "reference_answer": "Pages and layouts are Server Components by default. [e1] Use a Client Component for browser-only APIs such as localStorage. [e2] Use a Client Component for state and event handlers. [e3]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Pages and layouts are Server Components by default.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Use a Client Component for browser-only APIs such as localStorage.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Use a Client Component for state and event handlers.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Pages are Client Components by default.",
+        "correction": "Pages and layouts are Server Components by default.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/05-server-and-client-components.mdx",
+        "start_line": 12,
+        "end_line": 12,
+        "quote": "By default, layouts and pages are [Server Components](https://react.dev/reference/rsc/server-components), which lets you fetch data and render parts of your UI on the server, optionally cache the result, and stream it to the client. When you need interactivity or browser APIs, you can use [Client Components](https://react.dev/reference/rsc/use-client) to layer in functionality.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "c08524a1483abbdaf1821081cf0480cdbccbbee42b5036f0933755894e435a17",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/05-server-and-client-components.mdx#L12-L12"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/05-server-and-client-components.mdx",
+        "start_line": 26,
+        "end_line": 26,
+        "quote": "- Browser-only APIs. E.g. `localStorage`, `window`, `navigator.geolocation`, etc.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "c08524a1483abbdaf1821081cf0480cdbccbbee42b5036f0933755894e435a17",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/05-server-and-client-components.mdx#L26-L26"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/05-server-and-client-components.mdx",
+        "start_line": 24,
+        "end_line": 24,
+        "quote": "- [State](https://react.dev/learn/managing-state) and [event handlers](https://react.dev/learn/responding-to-events). E.g. `onClick`, `onChange`.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "c08524a1483abbdaf1821081cf0480cdbccbbee42b5036f0933755894e435a17",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/05-server-and-client-components.mdx#L24-L24"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "nextjs-05",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "debugging",
+    "difficulty": "medium",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, why can a Server Component fetch with no-store show old data after a development HMR refresh, and how can I clear that cache?",
+    "reference_answer": "The development HMR cache applies even to no-store fetches, so HMR refreshes may show old data. [e1] Navigation or a full-page reload clears the cache. [e1]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The development HMR cache applies even to no-store fetches, so HMR refreshes may show old data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Navigation or a full-page reload clears the HMR cache.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "no-store guarantees fresh data across every HMR refresh.",
+        "correction": "The development HMR cache applies even to no-store fetches, so HMR refreshes may show old data; navigation or a full-page reload clears it.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/fetch.mdx",
+        "start_line": 105,
+        "end_line": 105,
+        "quote": "By default, the [HMR cache](/docs/app/api-reference/config/next-config-js/serverComponentsHmrCache) applies to all fetch requests, including those with the default `auto no cache` and `cache: 'no-store'` option. This means uncached requests will not show fresh data between HMR refreshes. However, the cache will be cleared on navigation or full-page reloads.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "30bc67649cbf64eca5f4666cfe631eede1d185747f0d4c1027a9e91d4422f765",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/fetch.mdx#L105-L105"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/fetch.mdx",
+        "start_line": 103,
+        "end_line": 103,
+        "quote": "Next.js caches `fetch` responses in Server Components across Hot Module Replacement (HMR) in local development for faster responses and to reduce costs for billed API calls.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "30bc67649cbf64eca5f4666cfe631eede1d185747f0d4c1027a9e91d4422f765",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/fetch.mdx#L103-L103"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "nextjs-06",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "api-usage",
+    "difficulty": "medium",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, how does revalidatePath distinguish a concrete URL from a dynamic route pattern, and what does a layout invalidation cover?",
+    "reference_answer": "For a dynamic route pattern supply type page or layout; omit type for a literal path. [e1] A layout invalidation covers the layout, nested layouts, and pages beneath them. [e2] Do not append /page or /layout to the path; use the type parameter. [e3]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "For a dynamic route pattern supply type page or layout; omit type for a literal path.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "A layout invalidation covers the layout, nested layouts, and pages beneath them.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Do not append /page or /layout to the path; use the type parameter.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A dynamic route pattern never needs a type.",
+        "correction": "For a dynamic route pattern supply type page or layout; omit type for a literal path.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx",
+        "start_line": 29,
+        "end_line": 29,
+        "quote": "- `type`: (optional) `'page'` or `'layout'` string to change the type of path to revalidate. If `path` contains a dynamic segment, for example `/product/[slug]`, this parameter is required. If `path` is a literal path like `/product/1`, omit `type`.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "82b4f0888f1d1113c2e0e1a867983a88ce02bbf9419570e3710fe7fe4ccd2c02",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx#L29-L29"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx",
+        "start_line": 42,
+        "end_line": 42,
+        "quote": "- **Layouts**: Invalidates the layout (the `layout.tsx` at that segment), all nested layouts beneath it, and all pages beneath them",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "82b4f0888f1d1113c2e0e1a867983a88ce02bbf9419570e3710fe7fe4ccd2c02",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx#L42-L42"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx",
+        "start_line": 28,
+        "end_line": 28,
+        "quote": "- `path`: Either a string that represents your route file structure. This can be a literal path like `/product/123`, or a route pattern with dynamic segments like `/product/[slug]`. Do not append `/page` or `/layout`, use the `type` parameter instead. Must not exceed 1024 characters. This value is case-sensitive. You do not need to include a trailing slash, regardless of your [`trailingSlash`](/docs/app/api-reference/config/next-config-js/trailingSlash) config.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "82b4f0888f1d1113c2e0e1a867983a88ce02bbf9419570e3710fe7fe4ccd2c02",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/revalidatePath.mdx#L28-L28"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "nextjs-07",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "migration",
+    "difficulty": "medium",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, when incrementally migrating from the Pages Router, which App Router conventions replace getStaticPaths, _app.js/_document.js, and pages/api/*?",
+    "reference_answer": "In app, generateStaticParams replaces getStaticPaths. [e1] A single app/layout.js root layout replaces pages/_app.js and pages/_document.js. [e2] The route.js Route Handler convention replaces pages/api/* API Routes. [e3]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "In app, generateStaticParams replaces getStaticPaths.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "A single app/layout.js root layout replaces pages/_app.js and pages/_document.js.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "The route.js Route Handler convention replaces pages/api/* API Routes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "App Router pages should continue using getStaticPaths.",
+        "correction": "In app, generateStaticParams replaces getStaticPaths.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/02-guides/migrating/app-router-migration.mdx",
+        "start_line": 138,
+        "end_line": 138,
+        "quote": "- Data fetching functions like `getServerSideProps` and `getStaticProps` have been replaced with [a new API](/docs/app/getting-started/fetching-data) inside `app`. `getStaticPaths` has been replaced with [`generateStaticParams`](/docs/app/api-reference/functions/generate-static-params).",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "5d630312a65741a11ade532ec42a20fa83ded1bcaef2cb32f9e16d58d5b755dc",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/02-guides/migrating/app-router-migration.mdx#L138-L138"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/02-guides/migrating/app-router-migration.mdx",
+        "start_line": 139,
+        "end_line": 139,
+        "quote": "- `pages/_app.js` and `pages/_document.js` have been replaced with a single `app/layout.js` root layout. [Learn more](/docs/app/api-reference/file-conventions/layout#root-layout).",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "5d630312a65741a11ade532ec42a20fa83ded1bcaef2cb32f9e16d58d5b755dc",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/02-guides/migrating/app-router-migration.mdx#L139-L139"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/02-guides/migrating/app-router-migration.mdx",
+        "start_line": 142,
+        "end_line": 142,
+        "quote": "- `pages/api/*` API Routes have been replaced with the [`route.js`](/docs/app/api-reference/file-conventions/route) (Route Handler) special file.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "5d630312a65741a11ade532ec42a20fa83ded1bcaef2cb32f9e16d58d5b755dc",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/02-guides/migrating/app-router-migration.mdx#L142-L142"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "nextjs-08",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "false-premise",
+    "difficulty": "medium",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, I assume identical GET fetches are persistently cached just because they are memoized during rendering. Is that correct, and does that memoization apply in Route Handlers?",
+    "reference_answer": "No. Matching GET fetches are memoized for one server render pass, separate from persistent caching across requests. [e1] Memoization does not apply in Route Handlers because they are not part of the React component tree. [e2]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "No. Matching GET fetches are memoized for one server render pass, separate from persistent caching across requests.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Memoization does not apply in Route Handlers because they are not part of the React component tree.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Render-pass memoization implies persistent caching.",
+        "correction": "No. Matching GET fetches are memoized for one server render pass, separate from persistent caching across requests.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/fetch.mdx",
+        "start_line": 88,
+        "end_line": 88,
+        "quote": "`fetch` requests using `GET` with the same URL and options are automatically [memoized](/docs/app/glossary#memoization) during a server render pass. If you call the same `fetch` in multiple Server Components, layouts, pages, `generateStaticParams` and `generateViewport`, Next.js executes it only once and shares the result. This is separate from persistent [caching](/docs/app/getting-started/caching): memoization lasts only for a single render pass, while cached responses persist across requests.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "30bc67649cbf64eca5f4666cfe631eede1d185747f0d4c1027a9e91d4422f765",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/fetch.mdx#L88-L88"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/fetch.mdx",
+        "start_line": 97,
+        "end_line": 97,
+        "quote": "> **Good to know**: Memoization does not apply in [Route Handlers](/docs/app/api-reference/file-conventions/route), since they are not part of the React component tree.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "30bc67649cbf64eca5f4666cfe631eede1d185747f0d4c1027a9e91d4422f765",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/fetch.mdx#L97-L97"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "nextjs-09",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, after a Server Action edits a post, I need the writer to see fresh tagged data immediately; for a webhook Route Handler I can tolerate stale data. Which API and behavior should each use?",
+    "reference_answer": "Use updateTag in the Server Action; it is not available in Route Handlers. [e1] updateTag immediately expires the tag; the next request waits for fresh data rather than serving stale data. [e2] In the webhook Route Handler use revalidateTag with the max profile for stale-while-revalidate. [e3] [e4]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Use updateTag in the Server Action; it is not available in Route Handlers.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "updateTag immediately expires the tag; the next request waits for fresh data rather than serving stale data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "In the webhook Route Handler use revalidateTag with the max profile for stale-while-revalidate.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3",
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "updateTag is available in Route Handlers.",
+        "correction": "Use updateTag in the Server Action; it is not available in Route Handlers.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/updateTag.mdx",
+        "start_line": 12,
+        "end_line": 12,
+        "quote": "`updateTag` can **only** be called from within [Server Actions](/docs/app/getting-started/mutating-data). It cannot be used in Route Handlers, Client Components, or any other context.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "e92deeebe7b7cfcba512f594032fd8809e342bcafb3dac24f3636803124d4cc3",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/updateTag.mdx#L12-L12"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/updateTag.mdx",
+        "start_line": 16,
+        "end_line": 16,
+        "quote": "> **Good to know**: `updateTag` immediately expires the cached data for the specified tag. The next request will wait to fetch fresh data rather than serving stale content from the cache, ensuring users see their changes immediately.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "e92deeebe7b7cfcba512f594032fd8809e342bcafb3dac24f3636803124d4cc3",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/updateTag.mdx#L16-L16"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 23,
+        "end_line": 23,
+        "quote": "- **`profile=\"max\"` (recommended)**: A one year window, long enough that requests are always served stale content while the revalidation runs.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "82045b5b9bb7f68ba5ef6d01981a12b84d9e2b694fcaf9545bf5c7f944d0c045",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx#L23-L23"
+      },
+      {
+        "id": "e4",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 15,
+        "end_line": 15,
+        "quote": "`revalidateTag` can be called in Server Functions and Route Handlers.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "82045b5b9bb7f68ba5ef6d01981a12b84d9e2b694fcaf9545bf5c7f944d0c045",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx#L15-L15"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "nextjs-10",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, a webhook needs tagged data expired immediately without serving stale data, but updateTag fails in its Route Handler. What should I call and how must the tag be assigned first?",
+    "reference_answer": "Call revalidateTag(tag, { expire: 0 }); the next request blocks to revalidate rather than receiving stale content. [e1] updateTag is limited to Server Actions and cannot be called in a Route Handler. [e2] First assign the tag with fetch next.tags, or use cacheTag inside a use cache scope. [e3] [e4]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Call revalidateTag(tag, { expire: 0 }); the next request blocks to revalidate rather than receiving stale content.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "updateTag is limited to Server Actions and cannot be called in a Route Handler.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "First assign the tag with fetch next.tags, or use cacheTag inside a use cache scope; either method suffices.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3",
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Use updateTag directly in the webhook Route Handler.",
+        "correction": "Call revalidateTag(tag, { expire: 0 }); the next request blocks to revalidate rather than receiving stale content.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 25,
+        "end_line": 25,
+        "quote": "- **`{ expire: 0 }`**: Stale content is never served, so the next request is a blocking revalidate/cache miss. Use it when the caller needs the data gone immediately and you cannot use [`updateTag`](/docs/app/api-reference/functions/updateTag).",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "82045b5b9bb7f68ba5ef6d01981a12b84d9e2b694fcaf9545bf5c7f944d0c045",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx#L25-L25"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/updateTag.mdx",
+        "start_line": 12,
+        "end_line": 12,
+        "quote": "`updateTag` can **only** be called from within [Server Actions](/docs/app/getting-started/mutating-data). It cannot be used in Route Handlers, Client Components, or any other context.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "e92deeebe7b7cfcba512f594032fd8809e342bcafb3dac24f3636803124d4cc3",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/updateTag.mdx#L12-L12"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 43,
+        "end_line": 43,
+        "quote": "- Using the [`next.tags`](/docs/app/api-reference/functions/fetch) option with `fetch` for caching external API requests:",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "82045b5b9bb7f68ba5ef6d01981a12b84d9e2b694fcaf9545bf5c7f944d0c045",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx#L43-L43"
+      },
+      {
+        "id": "e4",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx",
+        "start_line": 49,
+        "end_line": 49,
+        "quote": "- Using [`cacheTag`](/docs/app/api-reference/functions/cacheTag) inside cached functions or components with the `'use cache'` directive:",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "82045b5b9bb7f68ba5ef6d01981a12b84d9e2b694fcaf9545bf5c7f944d0c045",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/revalidateTag.mdx#L49-L49"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "nextjs-11",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "I am migrating app/shop/[slug]/opengraph-image.tsx from Next.js 15 to 16.4.3 App Router. It exports generateImageMetadata({ params }), returning string image IDs, and a default Image({ params, id }) function. Which arguments become promises, and which remain synchronous? Show the corrected TypeScript parameter types and how to read them; the image-rendering implementation can be omitted.",
+    "reference_answer": "In Next.js 15 these image-function arguments were read synchronously [e5]. In Next.js 16, the default image-generation function receives params and id as promises, but generateImageMetadata continues to receive synchronous params [e1]. The corrected signatures and reads for this route and string IDs are [e2][e3][e4][e6]:\n\n```tsx\nexport function generateImageMetadata({\n  params,\n}: {\n  params: { slug: string };\n}) {\n  const { slug } = params;\n  // Use slug when constructing metadata if needed.\n  return [{ id: '1', alt: slug }];\n}\n\nexport default async function Image({\n  params,\n  id,\n}: {\n  params: Promise<{ slug: string }>;\n  id: Promise<string>;\n}) {\n  const { slug } = await params;\n  const imageId = await id;\n  // Existing image-rendering implementation uses slug and imageId here.\n}\n```\n\nThe default function's rendering body is intentionally omitted as permitted by the prompt. Equivalent Promise.all reads and compatible broader ID types are acceptable. generateImageMetadata itself may be async for data fetching; that does not make its params argument a promise.",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Keeps generateImageMetadata's params synchronous, typed as { slug: string }, and reads slug directly rather than describing params as newly promise-valued.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1",
+          "e2"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Explains the Next.js 15-to-16 change and shows Image parameters typed as Promise<{ slug: string }> and Promise<string> for the stated string IDs; a compatible broader ID type is acceptable.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1",
+          "e3",
+          "e4",
+          "e5"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Shows asynchronous reads of both Image params and id before using their resolved values, in an async function or equivalent documented implementation.",
+        "weight": 1,
+        "evidence_ids": [
+          "e4",
+          "e6"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Both exports now receive promise-valued params because all Next.js 16 params are async.",
+        "correction": "The image-generation function receives promise-valued params and id; generateImageMetadata still receives synchronous params.",
+        "evidence_ids": [
+          "e1",
+          "e2"
+        ]
+      },
+      {
+        "claim": "Only Image params becomes a promise; id remains a string argument.",
+        "correction": "Image id is also a promise, resolving here to a string because the metadata returns string IDs.",
+        "evidence_ids": [
+          "e1",
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/02-guides/upgrading/version-16.mdx",
+        "start_line": 316,
+        "end_line": 316,
+        "quote": "Starting with **Next.js 16**, to align with the [Async Request APIs](#async-request-apis-breaking-change) change, the image generating function now receives `params` and `id` as promises. The `generateImageMetadata` function continues to receive synchronous `params`.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "103cf2711b8a6d80e07b09b3583165ae454b8c11cb8066d6f4dec9198924de6f",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/02-guides/upgrading/version-16.mdx#L316-L316"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx",
+        "start_line": 22,
+        "end_line": 28,
+        "quote": "export function generateImageMetadata({\n  params,\n}: {\n  params: { slug: string }\n}) {\n  // ...\n}",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "d365ad571603a1d942d10b0d026c2b9816d6f3f5a1535144e515a8b946d6fb47",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx#L22-L28"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx",
+        "start_line": 140,
+        "end_line": 149,
+        "quote": "A promise that resolves to the `id` value from one of the items returned by `generateImageMetadata`. The `id` will be a `string` or `number` depending on what was returned from `generateImageMetadata`.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "d365ad571603a1d942d10b0d026c2b9816d6f3f5a1535144e515a8b946d6fb47",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx#L140-L149"
+      },
+      {
+        "id": "e4",
+        "path": "sources/nextjs/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx",
+        "start_line": 160,
+        "end_line": 170,
+        "quote": "export default async function Icon({\n  params,\n}: {\n  params: Promise<{ slug: string }>\n}) {\n  const { slug } = await params\n  // Use slug to generate the image\n}",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "d365ad571603a1d942d10b0d026c2b9816d6f3f5a1535144e515a8b946d6fb47",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/03-api-reference/04-functions/generate-image-metadata.mdx#L160-L170"
+      },
+      {
+        "id": "e5",
+        "path": "sources/nextjs/docs/01-app/02-guides/upgrading/version-16.mdx",
+        "start_line": 308,
+        "end_line": 312,
+        "quote": "// Next.js 15 - synchronous params and id access\nexport default function Image({ params, id }) {\n  const slug = params.slug\n  const imageId = id // string\n  // ...",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "103cf2711b8a6d80e07b09b3583165ae454b8c11cb8066d6f4dec9198924de6f",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/02-guides/upgrading/version-16.mdx#L308-L312"
+      },
+      {
+        "id": "e6",
+        "path": "sources/nextjs/docs/01-app/02-guides/upgrading/version-16.mdx",
+        "start_line": 324,
+        "end_line": 328,
+        "quote": "// Next.js 16 - asynchronous params and id access\nexport default async function Image({ params, id }) {\n  const { slug } = await params // params now async\n  const imageId = await id // id is now Promise<string> when using generateImageMetadata\n  // ...",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "103cf2711b8a6d80e07b09b3583165ae454b8c11cb8066d6f4dec9198924de6f",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/02-guides/upgrading/version-16.mdx#L324-L328"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "nextjs-12",
+    "project": "nextjs",
+    "product": "Next.js",
+    "category": "constraints",
+    "difficulty": "hard",
+    "version_context": "Next.js 16.4.3 stable release documentation; App Router unless explicitly comparing Pages Router.",
+    "question": "In Next.js 16.4.3 App Router, with Cache Components enabled, how do GET Route Handlers behave with runtime data, and how can a database query be included in a static response?",
+    "reference_answer": "GET handlers run at request time by default, but can be prerendered if they do not access uncached or runtime data. [e1] Request-specific data such as request headers or cookies stops prerendering. [e2] Extract the query to a helper with use cache to include the data in the prerendered response; do not put the directive directly in the Route Handler body. [e3] [e4]",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "GET handlers run at request time by default, but can be prerendered if they do not access uncached or runtime data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Request-specific data such as request headers or cookies stops prerendering.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Extract the database query to a helper with use cache to include it in the prerendered response; do not put the directive directly in the handler body.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3",
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Place use cache directly in the handler body.",
+        "correction": "Extract the cached work into a helper function and put use cache there, not directly in the Route Handler body.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 89,
+        "end_line": 89,
+        "quote": "When [Cache Components](/docs/app/getting-started/caching) is enabled, `GET` Route Handlers follow the same model as normal UI routes in your application. They run at request time by default, can be prerendered when they don't access uncached or runtime data, and you can use `use cache` to include uncached data in the static response.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "765cccdd91d78ffc971e0f4964ad5aacfc49b8df77bc86159e8d6ab51f11c143",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/15-route-handlers.mdx#L89-L89"
+      },
+      {
+        "id": "e2",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 124,
+        "end_line": 124,
+        "quote": "> **Good to know**: Prerendering stops if the `GET` handler accesses network requests, database queries, async file system operations, request object properties (like `req.url`, `request.headers`, `request.cookies`, `request.body`), runtime APIs like [`cookies()`](/docs/app/api-reference/functions/cookies), [`headers()`](/docs/app/api-reference/functions/headers), [`connection()`](/docs/app/api-reference/functions/connection), or non-deterministic operations.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "765cccdd91d78ffc971e0f4964ad5aacfc49b8df77bc86159e8d6ab51f11c143",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/15-route-handlers.mdx#L124-L124"
+      },
+      {
+        "id": "e3",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 144,
+        "end_line": 144,
+        "quote": "> **Good to know**: `use cache` cannot be used directly inside a Route Handler body; extract it to a helper function. Cached responses revalidate according to `cacheLife` when a new request arrives.",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "765cccdd91d78ffc971e0f4964ad5aacfc49b8df77bc86159e8d6ab51f11c143",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/15-route-handlers.mdx#L144-L144"
+      },
+      {
+        "id": "e4",
+        "path": "sources/nextjs/docs/01-app/01-getting-started/15-route-handlers.mdx",
+        "start_line": 126,
+        "end_line": 126,
+        "quote": "**Cached example** - accesses uncached data (database query) but caches it with `use cache`, allowing it to be included in the prerendered response:",
+        "source_id": "nextjs",
+        "source_commit": "29bbeab09981148ade186e8599ecdede15abc281",
+        "file_sha256": "765cccdd91d78ffc971e0f4964ad5aacfc49b8df77bc86159e8d6ab51f11c143",
+        "source_url": "https://github.com/vercel/next.js/blob/29bbeab09981148ade186e8599ecdede15abc281/docs/01-app/01-getting-started/15-route-handlers.mdx#L126-L126"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-01",
+    "project": "tanstack",
+    "product": "TanStack Query for React",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Query for React, what are the default retry count and retry delay for failed queries, and how does server rendering differ?",
+    "reference_answer": "By default failed queries retry three times with exponential backoff [e1], starting at 1000 ms and capped at 30 seconds [e3]; server retries default to zero [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Default is three retries.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Delay doubles from 1000 ms up to 30 seconds.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Server retry default is zero.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Server queries also retry three times by default.",
+        "correction": "Server retries default to zero.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-query/docs/framework/react/guides/important-defaults.md",
+        "start_line": 33,
+        "end_line": 35,
+        "quote": "- Queries that fail are **silently retried 3 times, with exponential backoff delay** before capturing and displaying an error to the UI.\n\n  > To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function.",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "a3f02f4fb7e8dc010962e8ea0aab9f31f9d6f6d724e66dc44eabc155265a1f50",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/important-defaults.md#L33-L35"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-retries.md",
+        "start_line": 15,
+        "end_line": 17,
+        "quote": "[//]: # 'Info'\n\n> On the server, retries default to `0` to make server rendering as fast as possible.",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "dddfc003c62658c91ba05d5e1412fbef12565953ec7e5767087694a0143c08fe",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/query-retries.md#L15-L17"
+      },
+      {
+        "id": "e3",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-retries.md",
+        "start_line": 39,
+        "end_line": 41,
+        "quote": "By default, retries in TanStack Query do not happen immediately after a request fails. As is standard, a back-off delay is gradually applied to each retry attempt.\n\nThe default `retryDelay` is set to double (starting at `1000`ms) with each attempt, but not exceed 30 seconds:",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "dddfc003c62658c91ba05d5e1412fbef12565953ec7e5767087694a0143c08fe",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/query-retries.md#L39-L41"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-02",
+    "project": "tanstack",
+    "product": "TanStack Query for React",
+    "category": "false-premise",
+    "difficulty": "medium",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Query for React, I assume a disabled useQuery automatically refetches after invalidateQueries and that skipToken still permits its returned refetch. Is that correct, and what should I use for manual fetching?",
+    "reference_answer": "No. An enabled: false query ignores invalidation/refetch calls that would normally refetch it, but its returned refetch can manually fetch [e1]. skipToken does not support refetch; calling it yields Missing queryFn. Use enabled: false when manual refetch is needed [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Disabled queries ignore invalidation-triggered refetch.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Returned refetch works with enabled: false.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "skipToken refetch fails with Missing queryFn.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "skipToken supports manual refetch.",
+        "correction": "It fails because there is no valid query function.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-query/docs/framework/react/guides/disabling-queries.md",
+        "start_line": 8,
+        "end_line": 15,
+        "quote": "When `enabled` is `false`:\n\n- If the query has cached data, then the query will be initialized in the `status === 'success'` or `isSuccess` state.\n- If the query does not have cached data, then the query will start in the `status === 'pending'` and `fetchStatus === 'idle'` state.\n- The query will not automatically fetch on mount.\n- The query will not automatically refetch in the background.\n- The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.\n- `refetch` returned from `useQuery` can be used to manually trigger the query to fetch. However, it will not work with `skipToken`.",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "9446ce0f06dbb3f2f8d7653b5fd5c29dcac33d8c93a6c0993f0589516761ec1d",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/disabling-queries.md#L8-L15"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/disabling-queries.md",
+        "start_line": 96,
+        "end_line": 100,
+        "quote": "## Typesafe disabling of queries using `skipToken`\n\nIf you are using TypeScript, you can use the `skipToken` to disable a query. This is useful when you want to disable a query based on a condition, but you still want the query to be type safe.\n\n> **IMPORTANT**: `refetch` from `useQuery` will not work with `skipToken`. Calling `refetch()` on a query that uses `skipToken` will result in a `Missing queryFn` error because there is no valid query function to execute. If you need to manually trigger queries, consider using `enabled: false` instead, which allows `refetch()` to work properly. Other than this limitation, `skipToken` works the same as `enabled: false`.",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "9446ce0f06dbb3f2f8d7653b5fd5c29dcac33d8c93a6c0993f0589516761ec1d",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/disabling-queries.md#L96-L100"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-03",
+    "project": "tanstack",
+    "product": "TanStack Query for React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Query for React, compare staleTime Infinity and static when invalidating an active query, including the special always-refetch options.",
+    "reference_answer": "Infinity prevents staleness-based refetches but manual invalidation works; active invalidated queries normally refetch in the background [e1][e2]. Static prevents invalidation-triggered refetches and blocks refetchOnMount, refetchOnWindowFocus and refetchOnReconnect set to always [e1].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Infinity allows manual invalidation and normal background refetch of an active query.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1",
+          "e2"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Static prevents invalidation from triggering a refetch.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Static blocks the three named always-refetch options.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Infinity and static have identical invalidation behavior.",
+        "correction": "Static is stricter and prevents invalidation-triggered refetches.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-query/docs/framework/react/guides/important-defaults.md",
+        "start_line": 12,
+        "end_line": 17,
+        "quote": "- A Query that has a `staleTime` set is considered **fresh** until that `staleTime` has elapsed.\n  - set `staleTime` to e.g. `2 * 60 * 1000` to make sure data is read from the cache, without triggering any kinds of refetches, for 2 minutes, or until the Query is [invalidated manually](./query-invalidation.md).\n  - set `staleTime` to `Infinity` to never trigger a refetch until the Query is [invalidated manually](./query-invalidation.md).\n  - set `staleTime` to `'static'` to **never** trigger a refetch, even if the Query is [invalidated manually](./query-invalidation.md).\n\n> `'static'` and `Infinity` both prevent staleness-based refetches, but `'static'` is stricter: `queryClient.invalidateQueries()` can invalidate a query with `staleTime: Infinity`, but has no effect on `staleTime: 'static'`. `refetchOnMount`, `refetchOnWindowFocus`, and `refetchOnReconnect` set to `\"always\"` are also blocked by `'static'`. Use `'static'` for data that cannot change while the app is running: feature flags fetched at boot, user permissions loaded at login, static reference tables. Use `Infinity` when you still want manual invalidation to work.",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "a3f02f4fb7e8dc010962e8ea0aab9f31f9d6f6d724e66dc44eabc155265a1f50",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/important-defaults.md#L12-L17"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-invalidation.md",
+        "start_line": 21,
+        "end_line": 24,
+        "quote": "When a query is invalidated with `invalidateQueries`, two things happen:\n\n- It is marked as stale. This stale state overrides any `staleTime` configurations being used in `useQuery` or related hooks\n- If the query is currently being rendered via `useQuery` or related hooks, it will also be refetched in the background",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "e4cda3acadb7fb216fe6454ef55a790c2baa09a783fdd6c61b5b79d00faca63c",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/query-invalidation.md#L21-L24"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-04",
+    "project": "tanstack",
+    "product": "TanStack Query for React",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Query for React, how can I invalidate every query whose key begins with todos, and how can I restrict this to the exact key?",
+    "reference_answer": "Use queryClient.invalidateQueries({ queryKey: ['todos'] }) for the prefix [e1]. Add exact: true to restrict the match to exactly that key, excluding keys with extra subkeys [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Use the todos queryKey as a prefix filter.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Add exact: true to exclude keys with additional parts.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A todos key filter is exact by default.",
+        "correction": "It matches keys beginning with todos unless exact is set.",
+        "evidence_ids": [
+          "e1",
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-invalidation.md",
+        "start_line": 27,
+        "end_line": 49,
+        "quote": "\nWhen using APIs like `invalidateQueries` and `removeQueries` (and others that support partial query matching), you can match multiple queries by their prefix, or get really specific and match an exact query. For information on the types of filters you can use, please see [Query Filters](./filters.md#query-filters).\n\nIn this example, we can use the `todos` prefix to invalidate any queries that start with `todos` in their query key:\n\n[//]: # 'Example2'\n\n```tsx\nimport { useQuery, useQueryClient } from '@tanstack/react-query'\n\n// Get QueryClient from the context\nconst queryClient = useQueryClient()\n\nqueryClient.invalidateQueries({ queryKey: ['todos'] })\n\n// Both queries below will be invalidated\nconst todoListQuery = useQuery({\n  queryKey: ['todos'],\n  queryFn: fetchTodoList,\n})\nconst todoListQuery = useQuery({\n  queryKey: ['todos', { page: 1 }],\n  queryFn: fetchTodoList,",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "e4cda3acadb7fb216fe6454ef55a790c2baa09a783fdd6c61b5b79d00faca63c",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/query-invalidation.md#L27-L49"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-invalidation.md",
+        "start_line": 79,
+        "end_line": 99,
+        "quote": "The `invalidateQueries` API is very flexible, so even if you want to **only** invalidate `todos` queries that don't have any more variables or subkeys, you can pass an `exact: true` option to the `invalidateQueries` method:\n\n[//]: # 'Example4'\n\n```tsx\nqueryClient.invalidateQueries({\n  queryKey: ['todos'],\n  exact: true,\n})\n\n// The query below will be invalidated\nconst todoListQuery = useQuery({\n  queryKey: ['todos'],\n  queryFn: fetchTodoList,\n})\n\n// However, the following query below will NOT be invalidated\nconst todoListQuery = useQuery({\n  queryKey: ['todos', { type: 'done' }],\n  queryFn: fetchTodoList,\n})",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "e4cda3acadb7fb216fe6454ef55a790c2baa09a783fdd6c61b5b79d00faca63c",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/query-invalidation.md#L79-L99"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "tanstack-05",
+    "project": "tanstack",
+    "product": "TanStack Router for React",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Router for React, how do preload freshness and unused retention defaults differ, and when is unused data removed?",
+    "reference_answer": "Preloaded loader data is fresh for 30 seconds by default; unused results have a 5-minute retention window and become eligible for pruning during later cache reconciliation, not at a scheduled exact eviction time [e1][e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Freshness defaults to 30 seconds.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Unused retention defaults to 5 minutes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Pruning occurs on a later reconciliation rather than at a guaranteed exact deadline.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Every preload is evicted exactly five minutes after it is created.",
+        "correction": "The window determines eligibility for later pruning.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/router/guide/preloading.md",
+        "start_line": 20,
+        "end_line": 31,
+        "quote": "\nSuccessful preloaded loader results can enter the router's in-memory cache with\ntwo independent policies:\n\n- **Freshness defaults to 30 seconds.** Configure it with\n  `defaultPreloadStaleTime` or a route's `preloadStaleTime`.\n- **The unused retention window defaults to 5 minutes.** Configure it with\n  `defaultPreloadGcTime` or a route's `preloadGcTime`. Older unused entries\n  are eligible for pruning during a later cache reconciliation.\n- **The speculative lane is never promoted into router state.** Navigation\n  creates its own presentation and runs its own `beforeLoad` chain. It can reuse\n  cached loader data or join a loader that is still in flight.",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "497cf4456271524ab63d871b7f282026f3e64d25b21252baedb61f705ba14960",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/router/guide/preloading.md#L20-L31"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-router/docs/router/guide/preloading.md",
+        "start_line": 102,
+        "end_line": 108,
+        "quote": "retained loader result can be reused without another loader call.\n`preloadGcTime` (or `defaultPreloadGcTime`) controls when an unused preload\nresult becomes eligible for pruning during a later cache reconciliation; it\ndoes not schedule a timer to evict the result at that exact moment. Both preload\nGC options default to 5 minutes.\n\nTo change this, you can set the `defaultPreloadStaleTime` option on your router:",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "497cf4456271524ab63d871b7f282026f3e64d25b21252baedb61f705ba14960",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/router/guide/preloading.md#L102-L108"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-06",
+    "project": "tanstack",
+    "product": "TanStack Router and Query for React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Router and Query main-branch documentation snapshots; not release-pinned.",
+    "question": "A React app uses TanStack Router loaders with TanStack Query. Query should decide whether preloaded data is fresh, rather than Router skipping the loader because of its own preload freshness window. What Router setting enables this? Show how a loader and component can share a posts query definition while the component remains subscribed to Query updates. Assume fetchPosts returns an array of posts and the router context and QueryClientProvider already use the same QueryClient. Choose an example Query freshness window and explain why the Router setting does not disable Query caching.",
+    "reference_answer": "Set defaultPreloadStaleTime: 0 on the router, or preloadStaleTime: 0 on the route. This makes settled Router preload results immediately stale so Query can make the freshness decision; it does not disable retention, Query caching, or in-flight sharing [e1]. Share queryKey, queryFn, and a chosen staleTime through queryOptions [e2]. Here is a route-level implementation using an illustrative 30-second Query freshness window [e3][e4]:\n\n```tsx\nimport { queryOptions, useSuspenseQuery } from '@tanstack/react-query';\nimport { createFileRoute } from '@tanstack/react-router';\n\nconst postsQuery = queryOptions({\n  queryKey: ['posts'],\n  queryFn: fetchPosts,\n  staleTime: 30_000,\n});\n\nexport const Route = createFileRoute('/posts')({\n  preloadStaleTime: 0,\n  loader: ({ context }) => context.queryClient.query(postsQuery),\n  component: PostsPage,\n});\n\nfunction PostsPage() {\n  const { data: posts } = useSuspenseQuery(postsQuery);\n  return <div>{posts.map((post) => post.title).join(', ')}</div>;\n}\n```\n\nReturning the loader's promise waits for data. Query can return its own fresh cached data without fetching, or fetch if stale or absent [e4]. The component hook subscribes to updates rather than merely reading a loader snapshot [e3]. The example's 30 seconds is an application choice, not a required default. The snapshot documents queryClient.query; accept other documented equivalent loader APIs when valid for the requested scope.",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Sets router defaultPreloadStaleTime or route preloadStaleTime to zero so the external Query cache can decide freshness.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Shows a shared posts queryKey and queryFn definition, for example queryOptions, and an explicitly chosen Query staleTime rather than treating a particular freshness window as mandatory.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Shows a loader that returns or awaits a Query cache-populating request and a component Query hook using the same definition and QueryClient to remain subscribed to updates.",
+        "weight": 2,
+        "evidence_ids": [
+          "e2",
+          "e3"
+        ]
+      },
+      {
+        "id": "c4",
+        "description": "Explains that zero Router preload freshness does not disable Query caching: Query still uses its own staleTime to reuse fresh cached data or fetch stale or missing data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Set Query staleTime to zero; Router's preload freshness can remain unchanged.",
+        "correction": "Set Router defaultPreloadStaleTime or route preloadStaleTime to zero so Router does not use its settled preload freshness to bypass Query's decision.",
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "claim": "Zero Router preload freshness disables caching and forces a network request on every navigation.",
+        "correction": "Query still reuses fresh cached data according to its own staleTime; Router retention and in-flight sharing are separate.",
+        "evidence_ids": [
+          "e1",
+          "e4"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/router/guide/preloading.md",
+        "start_line": 164,
+        "end_line": 169,
+        "quote": "To let an external cache make the freshness decision, set\n`routerOptions.defaultPreloadStaleTime` or `routeOptions.preloadStaleTime` to\n`0`. Settled preload data then becomes immediately stale in the Router, while\nretention still follows `preloadGcTime`. Overlapping preload or navigation\nconsumers can still share in-flight loader work, and `shouldReload` can still\nsuppress a loader call.",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "497cf4456271524ab63d871b7f282026f3e64d25b21252baedb61f705ba14960",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/router/guide/preloading.md#L164-L169"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-query/docs/framework/react/guides/query-options.md",
+        "start_line": 11,
+        "end_line": 28,
+        "quote": "import { queryOptions } from '@tanstack/react-query'\n\nfunction groupOptions(id: number) {\n  return queryOptions({\n    queryKey: ['groups', id],\n    queryFn: () => fetchGroups(id),\n    staleTime: 5 * 1000,\n  })\n}\n\n// usage:\n\nuseQuery(groupOptions(1))\nuseSuspenseQuery(groupOptions(5))\nuseQueries({\n  queries: [groupOptions(1), groupOptions(2)],\n})\nqueryClient.query(groupOptions(23))",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "a41ef393863a3e5af8d525eee2106734369e8e5d639dc41978cfe9c6a4f86bb3",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/guides/query-options.md#L11-L28"
+      },
+      {
+        "id": "e3",
+        "path": "sources/tanstack-router/docs/router/guide/external-data-loading.md",
+        "start_line": 80,
+        "end_line": 93,
+        "quote": "const postsQueryOptions = queryOptions({\n  queryKey: ['posts'],\n  queryFn: () => fetchPosts(),\n})\n\nexport const Route = createFileRoute('/posts')({\n  // Use the `loader` option to ensure that the data is loaded\n  loader: () =>\n    queryClient.query({ ...postsQueryOptions, staleTime: 'static' }),\n  component: () => {\n    // Read the data from the cache and subscribe to updates\n    const {\n      data: { posts },\n    } = useSuspenseQuery(postsQueryOptions)",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "cf4f431c422acd47b712db3dbcf08777d5286bc4cf608995c8254c1133694b59",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/router/guide/external-data-loading.md#L80-L93"
+      },
+      {
+        "id": "e4",
+        "path": "sources/tanstack-query/docs/framework/react/reference/classes/QueryClient.md",
+        "start_line": 1087,
+        "end_line": 1090,
+        "quote": "If the query already exists in the cache and its data is not stale (per the given\n`staleTime`), the cached data is returned without fetching. Otherwise, the query is fetched\nand the promise resolves once the fetch settles. If a `select` function is provided, it is\napplied to the data in both cases (cached or freshly fetched) before it is returned.",
+        "source_id": "tanstack-query",
+        "source_commit": "604d0a5aaf7b510f51f35fdf31b9881aaedc4499",
+        "file_sha256": "941f60941c43f61df1844552ed53f09843a736a23d19ecb465f815ac9ef8a851",
+        "source_url": "https://github.com/TanStack/query/blob/604d0a5aaf7b510f51f35fdf31b9881aaedc4499/docs/framework/react/reference/classes/QueryClient.md#L1087-L1090"
+      }
+    ],
+    "max_points": 5
+  },
+  {
+    "id": "tanstack-07",
+    "project": "tanstack",
+    "product": "TanStack Router for React",
+    "category": "api-usage",
+    "difficulty": "medium",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Router for React, how are nested URL search parameters represented, and how should a route turn parsed search parameters into trusted typed values?",
+    "reference_answer": "The default JSON-first parser encodes nested data as URL-safe JSON strings [e1]. Use the route validateSearch function: it receives parsed but unvalidated search as Record<string, unknown> and returns a typed object, ideally with sensible fallbacks [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Nested structures are encoded as URL-safe JSON strings.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "validateSearch receives unvalidated parsed values and returns a typed object; sensible fallbacks are recommended.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Parsed search values are automatically trusted and need no validation.",
+        "correction": "The route should validate them with validateSearch.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/router/guide/search-params.md",
+        "start_line": 77,
+        "end_line": 81,
+        "quote": "If you noticed, there are a few things going on here:\n\n- The first level of the search params is flat and string based, just like `URLSearchParams`.\n- First level values that are not strings are accurately preserved as actual numbers and booleans.\n- Nested data structures are automatically converted to URL-safe JSON strings",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "8d686b03757c399bf6aef170d2a9c08c37cb157650cbbc3fef9419ecf3edb098",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/router/guide/search-params.md#L77-L81"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-router/docs/router/guide/search-params.md",
+        "start_line": 116,
+        "end_line": 118,
+        "quote": "### Validating Search Params\n\nThe `validateSearch` option is a function that is provided the JSON parsed (but non-validated) search params as a `Record<string, unknown>` and returns a typed object of your choice. It's usually best to provide sensible fallbacks for malformed or unexpected search params so your users' experience stays non-interrupted.",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "8d686b03757c399bf6aef170d2a9c08c37cb157650cbbc3fef9419ecf3edb098",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/router/guide/search-params.md#L116-L118"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "tanstack-08",
+    "project": "tanstack",
+    "product": "TanStack Start for React",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Start for React, should an API intended for external cross-origin callers use a server function or a server route? What HTTP method does createServerFn use by default?",
+    "reference_answer": "Use a server route for external or intentionally cross-origin APIs; server functions are same-origin RPC endpoints intended for the Start application [e1]. createServerFn defaults to GET [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Use server routes for external or cross-origin endpoints.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Server functions are same-origin RPC for the app.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "createServerFn defaults to GET.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Server functions are the recommended public cross-origin API.",
+        "correction": "Use server routes for that purpose.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/start/framework/react/guide/server-functions.md",
+        "start_line": 23,
+        "end_line": 29,
+        "quote": "\n> [!NOTE]\n> Server functions are meant to be called by your TanStack Start application. They are easy to use from your app code, and Start handles serialization across the client/server boundary. If you need an endpoint that can be called from outside your Start app, use [server routes](./server-routes) instead.\n\n## Same-Origin Requests\n\nServer functions are same-origin RPC endpoints for your application. Browser requests to server functions should come from the same origin, verified with Fetch Metadata (`Sec-Fetch-Site`), `Origin`, or `Referer` headers. Use server routes for public APIs or endpoints that intentionally support cross-origin requests.",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "e5c215dd436c3fe002ec24e3218ca259f6c527c1383571c2ddfd6321297c5215",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/start/framework/react/guide/server-functions.md#L23-L29"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-router/docs/start/framework/react/guide/server-functions.md",
+        "start_line": 53,
+        "end_line": 61,
+        "quote": "Server functions are created with `createServerFn()` and can specify HTTP method:\n\n```tsx\nimport { createServerFn } from '@tanstack/react-start'\n\n// GET request (default)\nexport const getData = createServerFn().handler(async () => {\n  return { message: 'Hello from server!' }\n})",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "e5c215dd436c3fe002ec24e3218ca259f6c527c1383571c2ddfd6321297c5215",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/start/framework/react/guide/server-functions.md#L53-L61"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-09",
+    "project": "tanstack",
+    "product": "TanStack Start for React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Start for React, what happens to server-function CSRF protection when adding a custom src/start.ts, and which middleware type applies to server functions as well as SSR requests?",
+    "reference_answer": "Without src/start.ts Start installs server-function CSRF middleware automatically; if you define it, explicitly add createCsrfMiddleware, typically filtered to serverFn [e1]. Request middleware covers server requests including SSR and server functions [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Without src/start.ts server-function CSRF middleware is installed automatically.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "With custom src/start.ts explicitly add createCsrfMiddleware for server functions.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Request middleware covers SSR requests and server functions.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A custom start.ts preserves automatic CSRF middleware installation.",
+        "correction": "Add it explicitly.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-router/docs/start/framework/react/guide/server-functions.md",
+        "start_line": 29,
+        "end_line": 42,
+        "quote": "Server functions are same-origin RPC endpoints for your application. Browser requests to server functions should come from the same origin, verified with Fetch Metadata (`Sec-Fetch-Site`), `Origin`, or `Referer` headers. Use server routes for public APIs or endpoints that intentionally support cross-origin requests.\n\nTanStack Start provides `createCsrfMiddleware()` to protect server functions from cross-site requests. If your app does not define `src/start.ts`, Start installs this middleware automatically for server functions. If you define `src/start.ts`, add the middleware explicitly:\n\n```tsx\n// src/start.ts\nimport { createStart, createCsrfMiddleware } from '@tanstack/react-start'\n\nconst csrfMiddleware = createCsrfMiddleware({\n  filter: (ctx) => ctx.handlerType === 'serverFn',\n})\n\nexport const startInstance = createStart(() => ({\n  requestMiddleware: [csrfMiddleware],",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "e5c215dd436c3fe002ec24e3218ca259f6c527c1383571c2ddfd6321297c5215",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/start/framework/react/guide/server-functions.md#L29-L42"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-router/docs/start/framework/react/guide/middleware.md",
+        "start_line": 82,
+        "end_line": 85,
+        "quote": "## Request Middleware\n\nRequest middleware is used to customize the behavior of any server request that passes through it, including server routes, SSR and server functions.",
+        "source_id": "tanstack-router",
+        "source_commit": "da2adec76dbe6c0da6d6a0d5640f7b9388217f45",
+        "file_sha256": "57df8a760b286b3818728ad35b026fba832a5cda1fe8f0430981398e3f7c317a",
+        "source_url": "https://github.com/TanStack/router/blob/da2adec76dbe6c0da6d6a0d5640f7b9388217f45/docs/start/framework/react/guide/middleware.md#L82-L85"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-10",
+    "project": "tanstack",
+    "product": "TanStack Table for React",
+    "category": "migration",
+    "difficulty": "medium",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "When migrating a React table from TanStack Table v8 to the full v9 useTable API, what hook and feature configuration changes are required, and what temporary compatibility alternative is available?",
+    "reference_answer": "For the full v9 API, replace useReactTable with useTable and provide the required features option [e1][e2]. Alternatively, useLegacyTable accepts v8-style options on v9, but is deprecated, temporary, and includes all features [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "For the full v9 API, replace useReactTable with useTable.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "For useTable, provide the required features configuration.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "useLegacyTable is a deprecated temporary v8-style compatibility shortcut that includes all features.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "useLegacyTable is the preferred permanent v9 hook.",
+        "correction": "It is deprecated and intended as a temporary migration aid.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-table/docs/framework/react/guide/migrating.md",
+        "start_line": 91,
+        "end_line": 109,
+        "quote": "### Hook Rename\n\nThe number one change: `useReactTable` is now `useTable`, consistent with hook naming across all TanStack libraries:\n\n```tsx\n// Table V8\nimport { useReactTable } from '@tanstack/react-table'\nconst table = useReactTable(options)\n\n// Table V9\nimport { useTable } from '@tanstack/react-table'\nconst table = useTable(options)\n```\n\n### New Required `features` Table Option\n\nIn Table V9, you must explicitly declare which features your table uses. Features, Row Models, and Row Model processing \"Fns\" are defined on the new `features` table option.\n\nIn Table V8, all features were bundled and included in the `useReactTable` hook. In Table V9, you import only what you need.",
+        "source_id": "tanstack-table",
+        "source_commit": "c14e0221b1e656c7bb35e7b3d4cdf188719a3599",
+        "file_sha256": "91b45f98c61eccc71cf82c0bc935374ef13d951a0c1f7b012ce2cf4d7f32559a",
+        "source_url": "https://github.com/TanStack/table/blob/c14e0221b1e656c7bb35e7b3d4cdf188719a3599/docs/framework/react/guide/migrating.md#L91-L109"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-table/docs/framework/react/guide/migrating.md",
+        "start_line": 105,
+        "end_line": 109,
+        "quote": "### New Required `features` Table Option\n\nIn Table V9, you must explicitly declare which features your table uses. Features, Row Models, and Row Model processing \"Fns\" are defined on the new `features` table option.\n\nIn Table V8, all features were bundled and included in the `useReactTable` hook. In Table V9, you import only what you need.",
+        "source_id": "tanstack-table",
+        "source_commit": "c14e0221b1e656c7bb35e7b3d4cdf188719a3599",
+        "file_sha256": "91b45f98c61eccc71cf82c0bc935374ef13d951a0c1f7b012ce2cf4d7f32559a",
+        "source_url": "https://github.com/TanStack/table/blob/c14e0221b1e656c7bb35e7b3d4cdf188719a3599/docs/framework/react/guide/migrating.md#L105-L109"
+      },
+      {
+        "id": "e3",
+        "path": "sources/tanstack-table/docs/framework/react/guide/migrating.md",
+        "start_line": 65,
+        "end_line": 67,
+        "quote": "## Quick Legacy Migration\n\nNeed to migrate incrementally? We are providing a temporary shortcut with the `useLegacyTable` hook. It accepts the Table V8-style API while using Table V9 under the hood. **This is deprecated** and intended only as a temporary migration aid. It includes all features by default, so your bundle will be even larger than it was with Table V8.",
+        "source_id": "tanstack-table",
+        "source_commit": "c14e0221b1e656c7bb35e7b3d4cdf188719a3599",
+        "file_sha256": "91b45f98c61eccc71cf82c0bc935374ef13d951a0c1f7b012ce2cf4d7f32559a",
+        "source_url": "https://github.com/TanStack/table/blob/c14e0221b1e656c7bb35e7b3d4cdf188719a3599/docs/framework/react/guide/migrating.md#L65-L67"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-11",
+    "project": "tanstack",
+    "product": "TanStack Table for React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "With TanStack Table v9 for React using manual server-side pagination, why can row selection state contain IDs that getSelectedRowModel does not return, and how should row IDs be chosen?",
+    "reference_answer": "manualPagination assumes supplied data is already paginated [e1]. getSelectedRowModel can only return selected rows on the current page, while selection state can retain IDs absent from that data [e2]. Row IDs default to row.index; supply getRowId for a stable unique identifier such as a database ID [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Manual pagination assumes passed data is already paginated.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "The selected row model only includes current-page rows, while selection state may contain other IDs.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Row IDs default to row.index and getRowId can supply unique IDs.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "getSelectedRowModel retrieves selected records from all server pages.",
+        "correction": "It can only generate rows from the data passed in.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-table/docs/framework/react/guide/pagination.md",
+        "start_line": 80,
+        "end_line": 84,
+        "quote": "### Manual Server-Side Pagination\n\nIf you decide that you need to use server-side pagination, here is how you can implement it.\n\nNo pagination row model is needed for server-side pagination, but if you have provided it for other tables that do need it in a shared component, you can still turn off the client-side pagination by setting the `manualPagination` option to `true`. Setting the `manualPagination` option to `true` will tell the table instance to use the `table.getPrePaginatedRowModel` row model under the hood, and it will make the table instance assume that the `data` that you pass in is already paginated.",
+        "source_id": "tanstack-table",
+        "source_commit": "c14e0221b1e656c7bb35e7b3d4cdf188719a3599",
+        "file_sha256": "1b81ecdba2245dfe0852ce835a7d9265682ca86812084e0c4af778d8bf6dfc52",
+        "source_url": "https://github.com/TanStack/table/blob/c14e0221b1e656c7bb35e7b3d4cdf188719a3599/docs/framework/react/guide/pagination.md#L80-L84"
+      },
+      {
+        "id": "e2",
+        "path": "sources/tanstack-table/docs/framework/react/guide/row-selection.md",
+        "start_line": 53,
+        "end_line": 54,
+        "quote": "> [!NOTE]\n> If you are using `manualPagination`, be aware that the `getSelectedRowModel` API will only return selected rows on the current page because table row models can only generate rows based on the `data` that is passed in. Row selection state, however, can contain row ids that are not present in the `data` array just fine.",
+        "source_id": "tanstack-table",
+        "source_commit": "c14e0221b1e656c7bb35e7b3d4cdf188719a3599",
+        "file_sha256": "828229f049567bd4ae4ba00d133cd6dcb025277b895b76e1d213fe630a00972d",
+        "source_url": "https://github.com/TanStack/table/blob/c14e0221b1e656c7bb35e7b3d4cdf188719a3599/docs/framework/react/guide/row-selection.md#L53-L54"
+      },
+      {
+        "id": "e3",
+        "path": "sources/tanstack-table/docs/framework/react/guide/row-selection.md",
+        "start_line": 100,
+        "end_line": 102,
+        "quote": "### Useful Row Ids\n\nBy default, the row id for each row is simply the `row.index`. If you are using row selection features, you most likely want to use a more useful row identifier, since the row selection state is keyed by row id. You can use the `getRowId` table option to specify a function that returns a unique row id for each row.",
+        "source_id": "tanstack-table",
+        "source_commit": "c14e0221b1e656c7bb35e7b3d4cdf188719a3599",
+        "file_sha256": "828229f049567bd4ae4ba00d133cd6dcb025277b895b76e1d213fe630a00972d",
+        "source_url": "https://github.com/TanStack/table/blob/c14e0221b1e656c7bb35e7b3d4cdf188719a3599/docs/framework/react/guide/row-selection.md#L100-L102"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "tanstack-12",
+    "project": "tanstack",
+    "product": "TanStack Table for React",
+    "category": "constraints",
+    "difficulty": "medium",
+    "version_context": "Official main-branch documentation snapshot; not release-pinned.",
+    "question": "In TanStack Table v9 for React, what happens to pageIndex auto-reset by default with manualPagination, why might explicitly enabling auto-reset still not reset it when server-side sorting changes, and how should you handle the missing reset?",
+    "reference_answer": "pageIndex normally resets to zero when client row models recompute; manualPagination disables that default, though autoResetPageIndex can override it [e1]. If the relevant client-side row model is absent in a manual server-side table, sorting changes do not trigger a reset even if enabled; reset pageIndex in the change handler [e1].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Client row-model recomputation normally resets pageIndex to zero, but manualPagination disables that default.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "The option can be explicitly overridden.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Without the relevant client-side row model no automatic reset occurs; reset in the change handler.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Setting autoResetPageIndex true always resets server-side sorting changes.",
+        "correction": "A relevant included client-side row model must recompute.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/tanstack-table/docs/framework/react/guide/pagination.md",
+        "start_line": 283,
+        "end_line": 288,
+        "quote": "#### Auto Reset Page Index\n\nBy default, `pageIndex` is reset to `0` whenever the client-side row models recompute, such as when the `data` is updated, filters change, sorting changes, or grouping changes. This behavior is automatically disabled when `manualPagination` is `true`, but it can be overridden by explicitly assigning a boolean value to the `autoResetPageIndex` table option. There is also a global `autoResetAll` table option that disables (or enables) every auto-reset behavior at once.\n\n> [!NOTE]\n> Automatic resets run only when an included client-side row model that triggers them recomputes. If a manual server-side table omits the filtered, sorted, grouped, or other relevant row model, changing that controlled state does not trigger a page-index reset, even when `autoResetPageIndex` or `autoResetAll` is `true`. Reset `pageIndex` yourself in the corresponding change handler.",
+        "source_id": "tanstack-table",
+        "source_commit": "c14e0221b1e656c7bb35e7b3d4cdf188719a3599",
+        "file_sha256": "1b81ecdba2245dfe0852ce835a7d9265682ca86812084e0c4af778d8bf6dfc52",
+        "source_url": "https://github.com/TanStack/table/blob/c14e0221b1e656c7bb35e7b3d4cdf188719a3599/docs/framework/react/guide/pagination.md#L283-L288"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "takumi-01",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "What fonts are available by default in Takumi, and what should I do for non-Latin text?",
+    "reference_answer": "Takumi does not read system fonts. Its built-in Geist covers Latin at weights 300–800 and is last in the fallback chain [e1]. Load fonts covering each script you use [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "State system fonts are not read and built-in Geist covers Latin weights 300–800, last in fallback.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Load a font for every script used.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Takumi automatically uses system fonts.",
+        "correction": "System fonts are never read.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/fonts.mdx",
+        "start_line": 9,
+        "end_line": 10,
+        "quote": "Takumi never reads system fonts. The only built-in font is Geist, which covers Latin at weights\n  300 to 800 and comes last in every fallback chain.",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "6fc4c51a290680937301dd73cf981c91c0d613ceed3f991ff1a67e6b2aa144cb",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/fonts.mdx#L9-L10"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/fonts.mdx",
+        "start_line": 6,
+        "end_line": 6,
+        "quote": "Load a font for every script your text uses.",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "6fc4c51a290680937301dd73cf981c91c0d613ceed3f991ff1a67e6b2aa144cb",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/fonts.mdx#L6-L6"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "takumi-02",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "In Takumi image rendering, what format is the default, and how does WebP choose lossless versus lossy output?",
+    "reference_answer": "PNG is the default. WebP is lossless unless quality is set; lossless: true wins [e1]. On WebAssembly WebP is always lossless, and quality and lossless have no effect on it [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Identify PNG as default and explain WebP quality and lossless precedence.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Identify the WebAssembly WebP exception.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "WebP is always lossy.",
+        "correction": "WebP defaults to lossless.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 23,
+        "end_line": 25,
+        "quote": "| `png` (default) | Yes   | No        | No         | Lossless. Use it for transparency or exact pixels.                 |\n| `jpeg`          | No    | Yes       | No         | Lossy. Draw an opaque background, since JPEG has no alpha channel. |\n| `webp`          | Yes   | Yes       | Yes        | Lossless unless you set `quality`. `lossless: true` wins.          |",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "42a5dce3b506f8c4593cd96d1106994e4fe6206c300a2205a86e7110dbbd967c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/formats.mdx#L23-L25"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 32,
+        "end_line": 33,
+        "quote": "On the WebAssembly backend, WebP is always lossless. `quality` and `lossless` are accepted but\n  have no effect on WebP.",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "42a5dce3b506f8c4593cd96d1106994e4fe6206c300a2205a86e7110dbbd967c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/formats.mdx#L32-L33"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "takumi-03",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "How do I render a Takumi template directly as either an SVG string or encoded raster bytes?",
+    "reference_answer": "Use await renderSvg(template, options) for an SVG document string [e1]; use await render(template, options) for encoded raster bytes [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Use renderSvg for an SVG document string.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Use render for encoded image bytes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "renderSvg returns raster bytes.",
+        "correction": "It returns an SVG document string.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 84,
+        "end_line": 84,
+        "quote": "`renderSvg()` returns an SVG document string instead of a bitmap.",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "42a5dce3b506f8c4593cd96d1106994e4fe6206c300a2205a86e7110dbbd967c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/formats.mdx#L84-L84"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 6,
+        "end_line": 6,
+        "quote": "`render()` returns encoded bytes, and the `format` option chooses the encoder.",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "42a5dce3b506f8c4593cd96d1106994e4fe6206c300a2205a86e7110dbbd967c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/formats.mdx#L6-L6"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "takumi-04",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "debugging",
+    "difficulty": "easy",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "A Takumi image layout looks wrong. What option can help inspect its node boxes, and what does it do?",
+    "reference_answer": "Set `drawDebugBorder: true` in the render options [e1]; it outlines every node [e1].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Set drawDebugBorder to true in the render options.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "It outlines every node.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "It outlines only the root node.",
+        "correction": "It outlines every node.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/troubleshooting.mdx",
+        "start_line": 194,
+        "end_line": 205,
+        "quote": "Set `drawDebugBorder` to outline every node:\n\n```tsx title=\"Outline every node\"\nimport { ImageResponse } from \"takumi-js/response\";\n\nexport function GET() {\n  return new ImageResponse(<div tw=\"flex w-full h-full p-8\">Hello</div>, {\n    width: 1200,\n    height: 630,\n    drawDebugBorder: true,\n  });\n}",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "2ea171b10b6e91032b63bf67598df3d6dd017658c4d276153369688f2654a868",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/troubleshooting.mdx#L194-L205"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "takumi-05",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "false-premise",
+    "difficulty": "medium",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "Takumi automatically applies Tailwind Preflight to its built-in tw parser, so headings have no default margin. How can I keep that automatic reset?",
+    "reference_answer": "The premise is false: Preflight is not applied by default, and an h1 retains a 0.67em top margin [e1]. Enable it with css: `@import \"tailwindcss\";` [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Correct the premise: no default Preflight and h1 retains its default margin.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Enable Preflight using the Tailwind import in css.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Preflight is already active for tw.",
+        "correction": "It is off by default.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 199,
+        "end_line": 199,
+        "quote": "The built-in parser applies no Tailwind Preflight by default. Elements keep their default margins, so an `<h1>` gets a `0.67em` top margin until you add `mt-0`.",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "3fd6d49790bb88ff996122822c1082af84566cb2bf586ab37b813383e22a305c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/styles.mdx#L199-L199"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 221,
+        "end_line": 221,
+        "quote": "css: `@import \"tailwindcss\";`,",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "3fd6d49790bb88ff996122822c1082af84566cb2bf586ab37b813383e22a305c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/styles.mdx#L221-L221"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "takumi-06",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "migration",
+    "difficulty": "medium",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "When migrating Takumi v1 to v2, how should JavaScript code handle render calls and reusable fonts?",
+    "reference_answer": "Await top-level render, renderSvg and renderAnimation, which now return promises; Renderer methods are async too [e1]. Pass fonts per render, or await registerFont on a reused renderer to preload them before rendering [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Await top-level render functions and Renderer methods.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Pass fonts per render or await registerFont to preload fonts on a reused renderer before rendering.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Top-level render remains synchronous in v2.",
+        "correction": "It returns a promise and must be awaited.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/migration/v2.mdx",
+        "start_line": 22,
+        "end_line": 22,
+        "quote": "The top-level `takumi-js` functions `render`, `renderSvg`, and `renderAnimation` load fonts and images before they render, so they return promises. `await` them. The [napi](https://www.npmjs.com/package/@takumi-rs/core) and [WebAssembly](https://www.npmjs.com/package/@takumi-rs/wasm) `Renderer` methods are async too.",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "9d40a2974505df185a1278d8dd459b1eac257809c2da083a698788c786029560",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/migration/v2.mdx#L22-L22"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/migration/v2.mdx",
+        "start_line": 43,
+        "end_line": 55,
+        "quote": "Pass `fonts` with each render for most uses. Use `registerFont` to preload fonts on a renderer you reuse.\n\n```ts title=\"Pass fonts per render\"\nrenderer.loadFonts([archivo, geist]); // [!code --]\nrenderer.render(node, { fonts: [archivo, geist] }); // [!code ++]\n```\n\nTo preload a font once and reuse it across many renders, call `registerFont`, which replaces all three loaders. It takes raw bytes or a `{ name, data, weight, style }` descriptor, and resolves to the families it registered.\n\n```ts title=\"Replace loadFonts with registerFont\"\nrenderer.loadFonts([archivo, geist]); // [!code --]\nawait renderer.registerFont(archivo); // [!code ++]\nawait renderer.registerFont(geist); // [!code ++]",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "9d40a2974505df185a1278d8dd459b1eac257809c2da083a698788c786029560",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/migration/v2.mdx#L43-L55"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "takumi-07",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "defaults",
+    "difficulty": "medium",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "How does Takumi devicePixelRatio affect the output image dimensions and CSS layout? How do I double the resolution of a 1200 by 630 design?",
+    "reference_answer": "Width and height remain output pixels; devicePixelRatio sets image pixels per CSS pixel [e1]. Use 2400 by 1260 with ratio 2 for the same layout at double resolution [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Explain dimensions remain output pixels while ratio scales CSS pixels.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Specify 2400 × 1260 and ratio 2 for equivalent 1200 × 630 layout.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Setting ratio 2 doubles the output dimensions automatically.",
+        "correction": "Width and height stay the output pixel dimensions.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 42,
+        "end_line": 42,
+        "quote": "`devicePixelRatio` sets how many image pixels each CSS pixel takes. `width` and `height` stay the image size in pixels.",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "42a5dce3b506f8c4593cd96d1106994e4fe6206c300a2205a86e7110dbbd967c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/formats.mdx#L42-L42"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 54,
+        "end_line": 54,
+        "quote": "The result is a 2400 × 1260 image. Every CSS length draws twice as large, so the layout matches a 1200 × 630 render at ratio `1`.",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "42a5dce3b506f8c4593cd96d1106994e4fe6206c300a2205a86e7110dbbd967c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/formats.mdx#L54-L54"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "takumi-08",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "constraints",
+    "difficulty": "medium",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "How does Takumi handle an unknown style object property versus a supported property with an invalid value?",
+    "reference_answer": "An unsupported property name is silently dropped [e1]. A supported name whose value cannot be parsed fails the entire style object [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "An unsupported property name is silently dropped.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "An unparsable value for a supported property fails the whole style object.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Invalid values are always silently ignored.",
+        "correction": "An unparsable value for a listed property fails the style object.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/concepts.mdx",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "A property name outside the supported list is dropped without an error.",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "575cc2b4d969a3606be787f951e83031c48bf0274268c2957441971a6d7f64ba",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/concepts.mdx#L46-L46"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/concepts.mdx",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "A listed name with an unparsable value fails the whole style object.",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "575cc2b4d969a3606be787f951e83031c48bf0274268c2957441971a6d7f64ba",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/concepts.mdx#L46-L46"
+      }
+    ],
+    "max_points": 2
+  },
+  {
+    "id": "takumi-09",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "Using Takumi's native Node.js backend in a Next.js App Router endpoint, write a GET handler returning a 1200 by 630 PNG containing Hello. If rendering fails, return a plain-text HTTP 503 instead of a broken image stream. Include the required native-binding bundler configuration.",
+    "reference_answer": "Use ImageResponse from takumi-js/response in a Node.js App Router handler, and externalize @takumi-rs/core because its native .node addon cannot be bundled [e1][e2]. Use app/og/route.ts with an HTML string (which Takumi accepts [e1]) to follow Next.js's documented route.js|ts convention without JSX in a .ts file. Set the dimensions and select PNG explicitly, or rely on its PNG default [e3]. Await response.ready before returning the image; it rejects on render failure, allowing a different Response to be returned before the image response is committed [e4].\n\n```ts\n// app/og/route.ts\nimport { ImageResponse } from 'takumi-js/response';\n\nexport async function GET() {\n  try {\n    const response = new ImageResponse('<div>Hello</div>', {\n      width: 1200,\n      height: 630,\n      format: 'png',\n    });\n    await response.ready;\n    return response;\n  } catch {\n    return new Response('Failed to generate image', {\n      status: 503,\n      headers: { 'Content-Type': 'text/plain; charset=utf-8' },\n    });\n  }\n}\n```\n\n```ts\n// next.config.ts\nimport type { NextConfig } from 'next';\n\nconst config: NextConfig = {\n  serverExternalPackages: ['@takumi-rs/core'],\n};\n\nexport default config;\n```\n\nonError is only a side-effect hook: its return value is ignored and it does not replace the failed stream [e5]. The 503 status and text are the requested adaptation of the documented fallback Response pattern.",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Shows an App Router GET handler using ImageResponse from takumi-js/response to render Hello at width 1200 and height 630 as PNG, explicitly or via the PNG default, in the requested Node.js environment.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1",
+          "e3"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Awaits response.ready before returning the image and catches rendering failure before committing the response, rather than relying on onError to return a fallback.",
+        "weight": 2,
+        "evidence_ids": [
+          "e4",
+          "e5"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Returns a separate plain-text Response with HTTP status 503 on failure; an explicit text/plain header or the standard string-Response behavior is acceptable.",
+        "weight": 1,
+        "evidence_ids": [
+          "e4"
+        ]
+      },
+      {
+        "id": "c4",
+        "description": "Includes serverExternalPackages: ['@takumi-rs/core'] in Next.js configuration to keep the native addon out of the bundle.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Return a new Response with status 503 from ImageResponse's onError callback.",
+        "correction": "Takumi ignores onError's return value and the image stream still errors; await ready and catch the failure before returning a response.",
+        "evidence_ids": [
+          "e4",
+          "e5"
+        ]
+      },
+      {
+        "claim": "A try/catch around returning new ImageResponse is enough to catch later asynchronous rendering failures.",
+        "correction": "The response streams while rendering; await response.ready inside the try/catch before returning it.",
+        "evidence_ids": [
+          "e4"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/takumi/docs/content/docs/reference/image-response.mdx",
+        "start_line": 9,
+        "end_line": 16,
+        "quote": "import { ImageResponse } from \"takumi-js/response\";\n\nexport function GET() {\n  return new ImageResponse(<div>Hello Takumi</div>, { width: 1200, height: 630 });\n}\n```\n\nThe first argument takes what `render()` takes: JSX, an HTML string, or a node tree.",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "8e92a813af4b22967aee55afc2c2eef8479ad339bd3d6d22cc247ed731f1a89d",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/reference/image-response.mdx#L9-L16"
+      },
+      {
+        "id": "e2",
+        "path": "sources/takumi/docs/content/docs/frameworks/nextjs.mdx",
+        "start_line": 20,
+        "end_line": 30,
+        "quote": "Add `@takumi-rs/core` to `serverExternalPackages`. It holds a native `.node` addon, which Next.js cannot bundle.",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "2468e00cbe7ed8262d23bf414cb9297cd8972dca4244ef241a4be27ec62ba9da",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/frameworks/nextjs.mdx#L20-L30"
+      },
+      {
+        "id": "e3",
+        "path": "sources/takumi/docs/content/docs/reference/image-response.mdx",
+        "start_line": 32,
+        "end_line": 36,
+        "quote": "format: {\n      type: '\"png\" | \"jpeg\" | \"webp\" | \"ico\" | \"raw\"',\n      default: '\"png\"',\n      description: \"Output encoder. Also sets the default content-type.\",",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "8e92a813af4b22967aee55afc2c2eef8479ad339bd3d6d22cc247ed731f1a89d",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/reference/image-response.mdx#L32-L36"
+      },
+      {
+        "id": "e4",
+        "path": "sources/takumi/docs/content/docs/reference/image-response.mdx",
+        "start_line": 125,
+        "end_line": 134,
+        "quote": "export async function GET() {\n  const response = new ImageResponse(<div>Hello Takumi</div>, { width: 1200, height: 630 });\n\n  try {\n    await response.ready; // [!code highlight]\n    return response;\n  } catch {\n    return new Response(\"Failed to generate image\", { status: 500 });\n  }\n}",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "8e92a813af4b22967aee55afc2c2eef8479ad339bd3d6d22cc247ed731f1a89d",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/reference/image-response.mdx#L125-L134"
+      },
+      {
+        "id": "e5",
+        "path": "sources/takumi/docs/content/docs/reference/image-response.mdx",
+        "start_line": 137,
+        "end_line": 137,
+        "quote": "`onError` is for side effects such as logging. Takumi ignores its return value, and the response stream still errors. Use `ready` to send a fallback.",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "8e92a813af4b22967aee55afc2c2eef8479ad339bd3d6d22cc247ed731f1a89d",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/reference/image-response.mdx#L137-L137"
+      }
+    ],
+    "max_points": 5
+  },
+  {
+    "id": "takumi-10",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "A Takumi v1 template uses an absolutely positioned badge and Tailwind border-l-2 border-dashed. What v2 changes could alter the result without Preflight, and how do I fix them?",
+    "reference_answer": "v2 defaults position to static, so explicitly set position: relative on the intended containing block [e1]. Without Preflight, border-dashed sets all sides and unset widths are medium: the left is 2px and other sides 3px. Preflight’s border: 0 solid reset removes the extra borders [e2]; enable it through the Tailwind import [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Set position relative on the intended containing block because v2 defaults to static.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Explain border-dashed draws 2px left and 3px other borders without Preflight.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Enable Preflight with the Tailwind import.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "border-l-2 border-dashed only paints the left edge without Preflight.",
+        "correction": "The other edges are 3px.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/migration/v2.mdx",
+        "start_line": 187,
+        "end_line": 187,
+        "quote": "`position` now defaults to `static`, not `relative`. An element establishes a containing block for absolutely positioned descendants, and honors `top`/`right`/`bottom`/`left` insets, only when you opt in. Set `position: relative` where you relied on the old default.",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "9d40a2974505df185a1278d8dd459b1eac257809c2da083a698788c786029560",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/migration/v2.mdx#L187-L187"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 206,
+        "end_line": 209,
+        "quote": "Without Preflight, a border style utility draws on every side. `border-dashed` sets `border-style`\n  on all four sides, and an unset border width is `medium`. So `border-l-2 border-dashed` draws a\n  2px left border and 3px borders on the other sides. Preflight's `border: 0 solid` reset removes\n  them.",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "3fd6d49790bb88ff996122822c1082af84566cb2bf586ab37b813383e22a305c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/styles.mdx#L206-L209"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 221,
+        "end_line": 221,
+        "quote": "css: `@import \"tailwindcss\";`,",
+        "id": "e3",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "3fd6d49790bb88ff996122822c1082af84566cb2bf586ab37b813383e22a305c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/styles.mdx#L221-L221"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "takumi-11",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "For a Takumi template rendered both as an image and as a PDF, how do screen and print media queries behave, what happens with unlisted media features such as prefers-color-scheme, and how should I handle PDF blur filters?",
+    "reference_answer": "Image renders use screen and PDF renders use print [e1]. Unlisted media features including prefers-color-scheme match nothing, but the remaining stylesheet applies [e2]. PDF cannot draw filter blur or drop-shadow and stops; remove the filter or rasterize the subtree as an img [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Distinguish screen image renders from print PDF renders.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Unlisted media features including prefers-color-scheme match nothing; remaining styles apply.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Explain PDF blur/drop-shadow failure and remove filter or rasterize subtree as img.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "PDF renders silently ignore blur.",
+        "correction": "The renderer stops instead.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 72,
+        "end_line": 72,
+        "quote": "| `screen`, `print`, `all` | the media type: image renders are `screen`, PDF renders are `print` |",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "3fd6d49790bb88ff996122822c1082af84566cb2bf586ab37b813383e22a305c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/styles.mdx#L72-L72"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 77,
+        "end_line": 78,
+        "quote": "Any other feature, `prefers-color-scheme` included, matches nothing. The rest of the stylesheet\n  still applies.",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "3fd6d49790bb88ff996122822c1082af84566cb2bf586ab37b813383e22a305c",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/styles.mdx#L77-L78"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/troubleshooting.mdx",
+        "start_line": 170,
+        "end_line": 170,
+        "quote": "Remove the filter, or rasterize that subtree yourself and place it as an `<img>`. PDF has no blur operator, so `filter: blur()` and `drop-shadow()` cannot be drawn. The renderer stops rather than ship a page that differs from the image output.",
+        "id": "e3",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "2ea171b10b6e91032b63bf67598df3d6dd017658c4d276153369688f2654a868",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/troubleshooting.mdx#L170-L170"
+      }
+    ],
+    "max_points": 3
+  },
+  {
+    "id": "takumi-12",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "A Takumi server renders untrusted image URLs and shares a byte cache. How should I restrict requests safely, and what happens when an image fetch fails?",
+    "reference_answer": "Set images.allowUrl for user-controlled markup [e1]. It checks redirect destinations, but a fetchCache hit checks only the requested URL, so do not share a cache across URL policies; use custom fetch to filter resolved IPs [e2]. By default a failed fetch rejects the render; images.throwOnError: false omits that image and draws the rest [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Set allowUrl for user-controlled markup.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Explain redirect checks, cache-hit limitation, no cross-policy cache sharing, and custom fetch for IP filtering.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Default failed image rejects render; throwOnError false omits it.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A shared cache rechecks every cached redirect against each new policy.",
+        "correction": "Cache hits check only the requested URL.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/images.mdx",
+        "start_line": 251,
+        "end_line": 252,
+        "quote": "Takumi fetches these URLs from your server. Set `allowUrl` whenever user input can reach the\n  markup.",
+        "id": "e1",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "c7b6a7db3aa78e690a44ea2f516f0eaa65bac298d1d91c526f82dcc3b86e9c15",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/images.mdx#L251-L252"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/images.mdx",
+        "start_line": 255,
+        "end_line": 257,
+        "quote": "- `allowUrl` checks each redirect destination, up to five hops. Each hop shares the same deadline and gets its own attempts.\n- A `fetchCache` hit checks only the requested URL, because cached bytes keep no redirect history. Do not share one `fetchCache` across different URL policies.\n- `allowUrl` sees URLs, not IP addresses. To filter by resolved address, pass a custom `fetch`.",
+        "id": "e2",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "c7b6a7db3aa78e690a44ea2f516f0eaa65bac298d1d91c526f82dcc3b86e9c15",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/images.mdx#L255-L257"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/images.mdx",
+        "start_line": 234,
+        "end_line": 234,
+        "quote": "By default, one image that fails to fetch rejects the whole render. Set `throwOnError: false` to leave that image out and draw the rest.",
+        "id": "e3",
+        "source_id": "takumi",
+        "source_commit": "0cb1228af6dc55c88323aaf9218f720f056cf85d",
+        "file_sha256": "c7b6a7db3aa78e690a44ea2f516f0eaa65bac298d1d91c526f82dcc3b86e9c15",
+        "source_url": "https://github.com/kane50613/takumi/blob/0cb1228af6dc55c88323aaf9218f720f056cf85d/docs/content/docs/images.mdx#L234-L234"
+      }
+    ],
+    "max_points": 3
+  }
+]

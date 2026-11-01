@@ -1,0 +1,816 @@
+[
+  {
+    "id": "react-01",
+    "project": "react",
+    "product": "React",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, how does a useState initializer function differ from a function passed to its setter?",
+    "reference_answer": "The initializer is pure, takes no arguments, and supplies initial state; it is ignored after initial render [e1]. A setter function is a pure updater receiving pending state; React queues it and applies queued updaters on the next render [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Initializer is pure, takes no arguments, and its result initializes state; initialState is ignored after initial render.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Setter updater is pure, receives pending state and is queued for the next render.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Both functions run on every render.",
+        "correction": "The initializer is used for initialization and the updater is queued for the next render.",
+        "evidence_ids": [
+          "e1",
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useState.md",
+        "start_line": 41,
+        "end_line": 42,
+        "quote": "* `initialState`: The value you want the state to be initially. It can be a value of any type, but there is a special behavior for functions. This argument is ignored after the initial render.\n  * If you pass a function as `initialState`, it will be treated as an _initializer function_. It should be pure, should take no arguments, and should return a value of any type. React will call your initializer function when initializing the component, and store its return value as the initial state. [See an example below.](#avoiding-recreating-the-initial-state)"
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useState.md",
+        "start_line": 74,
+        "end_line": 74,
+        "quote": "  * If you pass a function as `nextState`, it will be treated as an _updater function_. It must be pure, should take the pending state as its only argument, and should return the next state. React will put your updater function in a queue and re-render your component. During the next render, React will calculate the next state by applying all of the queued updaters to the previous state. [See an example below.](#updating-state-based-on-the-previous-state)"
+      }
+    ]
+  },
+  {
+    "id": "react-02",
+    "project": "react",
+    "product": "React",
+    "category": "constraints",
+    "difficulty": "easy",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, when should a component use a ref instead of state for an interval ID, and what render-time restriction applies?",
+    "reference_answer": "A ref retains the same object across renders, and changing current does not trigger a render, making it appropriate for an interval ID not used for visual output [e1][e2]. Do not read or write current during rendering except for initialization [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The ref object is retained across renders.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Changing current does not trigger a render; refs suit information like an interval ID that does not affect visual output.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Do not read or write current during render except for initialization.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Changing a ref causes a render.",
+        "correction": "Changing ref.current does not cause React to re-render.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useRef.md",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "On the next renders, `useRef` will return the same object."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useRef.md",
+        "start_line": 75,
+        "end_line": 75,
+        "quote": "**Changing a ref does not trigger a re-render.** This means refs are perfect for storing information that doesn't affect the visual output of your component. For example, if you need to store an [interval ID](https://developer.mozilla.org/en-US/docs/Web/API/setInterval) and retrieve it later, you can put it in a ref. To update the value inside the ref, you need to manually change its <CodeStep step={2}>`current` property</CodeStep>:"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useRef.md",
+        "start_line": 52,
+        "end_line": 52,
+        "quote": "* Do not write _or read_ `ref.current` during rendering, except for [initialization.](#avoiding-recreating-the-ref-contents) This makes your component's behavior unpredictable."
+      }
+    ]
+  },
+  {
+    "id": "react-03",
+    "project": "react",
+    "product": "React",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, how does useContext choose a value when there is or is not a provider above the reader? Can a provider returned by that same reader affect it?",
+    "reference_answer": "The nearest provider above supplies its value; without one, useContext returns createContext’s default value [e1]. A provider returned by the reader itself cannot affect that call; it must be above the reader [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The nearest provider above supplies the value, or createContext defaultValue if none exists.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "A provider returned by the same component does not affect its useContext call.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A provider returned by the reader wraps and affects its own useContext call.",
+        "correction": "The provider must be above the calling component.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useContext.md",
+        "start_line": 41,
+        "end_line": 41,
+        "quote": "`useContext` returns the context value for the calling component. It is determined as the `value` passed to the closest `SomeContext` above the calling component in the tree. If there is no such provider, then the returned value will be the `defaultValue` you have passed to [`createContext`](/reference/react/createContext) for that context. The returned value is always up-to-date. React automatically re-renders components that read some context if it changes."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useContext.md",
+        "start_line": 45,
+        "end_line": 45,
+        "quote": "* `useContext()` call in a component is not affected by providers returned from the *same* component. The corresponding `<Context>` **needs to be *above*** the component doing the `useContext()` call."
+      }
+    ]
+  },
+  {
+    "id": "react-04",
+    "project": "react",
+    "product": "React",
+    "category": "constraints",
+    "difficulty": "easy",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, what is useId intended to provide, and can it generate list keys or use() cache keys?",
+    "reference_answer": "useId returns a unique ID string associated with the particular call and component [e1], useful for accessibility attributes [e2]. Do not use it for list keys or use() cache keys; generate these from data [e3][e4].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Returns a unique ID string associated with the call and component.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Can supply IDs for accessibility attributes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Do not use it for list keys; keys should come from data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      },
+      {
+        "id": "c4",
+        "description": "Do not use it for use() cache keys; derive cache keys from data.",
+        "weight": 1,
+        "evidence_ids": [
+          "e4"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "useId is the recommended source of list keys.",
+        "correction": "List keys should be generated from the data.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useId.md",
+        "start_line": 41,
+        "end_line": 41,
+        "quote": "`useId` returns a unique ID string associated with this particular `useId` call in this particular component."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useId.md",
+        "start_line": 7,
+        "end_line": 7,
+        "quote": "`useId` is a React Hook for generating unique IDs that can be passed to accessibility attributes."
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useId.md",
+        "start_line": 49,
+        "end_line": 49,
+        "quote": "* `useId` **should not be used to generate keys** in a list. [Keys should be generated from your data.](/learn/rendering-lists#where-to-get-your-key)"
+      },
+      {
+        "id": "e4",
+        "path": "sources/react/src/content/reference/react/useId.md",
+        "start_line": 47,
+        "end_line": 47,
+        "quote": "* `useId` **should not be used to generate cache keys** for [use()](/reference/react/use). The ID is stable when a component is mounted but may change during rendering. Cache keys should be generated from your data."
+      }
+    ]
+  },
+  {
+    "id": "react-05",
+    "project": "react",
+    "product": "React",
+    "category": "debugging",
+    "difficulty": "medium",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "A React Effect connects to a service using a room prop, with Strict Mode enabled at the root. What happens on a changed dependency and unmount, and why can an extra connection cycle occur in development?",
+    "reference_answer": "After a commit with changed dependencies, React runs the old cleanup before the new setup; on removal it runs cleanup [e1]. Root-level Strict Mode adds a development-only setup/cleanup cycle as a cleanup stress test; implement cleanup that mirrors setup [e2]. If Strict Mode is not enabled at the root, React does not re-run Effects an extra time on initial mount [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "On changed dependencies, old cleanup runs before new setup; cleanup also runs on removal.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Root-level Strict Mode adds a development-only setup and cleanup cycle before real setup to stress-test cleanup.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2",
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "The extra cycle proves production always reconnects twice.",
+        "correction": "The extra Strict Mode cycle is development-only.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useEffect.md",
+        "start_line": 47,
+        "end_line": 47,
+        "quote": "* `setup`: The function with your Effect's logic. Your setup function may also optionally return a *cleanup* function. When your [component commits](/learn/render-and-commit#step-3-react-commits-changes-to-the-dom), React will run your setup function. After every commit with changed dependencies, React will first run the cleanup function (if you provided it) with the old values, and then run your setup function with the new values. After your component is removed from the DOM, React will run your cleanup function."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useEffect.md",
+        "start_line": 61,
+        "end_line": 61,
+        "quote": "* When Strict Mode is on, React will **run one extra development-only setup+cleanup cycle** before the first real setup. This is a stress-test that ensures that your cleanup logic \"mirrors\" your setup logic and that it stops or undoes whatever the setup is doing. If this causes a problem, [implement the cleanup function.](/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development)"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/StrictMode.md",
+        "start_line": 127,
+        "end_line": 127,
+        "quote": "When `StrictMode` is enabled for a part of the app, React will only enable behaviors that are possible in production. For example, if `<StrictMode>` is not enabled at the root of the app, it will not [re-run Effects an extra time](#fixing-bugs-found-by-re-running-effects-in-development) on initial mount, since this would cause child effects to double fire without the parent effects, which cannot happen in production."
+      }
+    ]
+  },
+  {
+    "id": "react-06",
+    "project": "react",
+    "product": "React",
+    "category": "false-premise",
+    "difficulty": "medium",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, all APIs named use are Hooks and must never be called conditionally. Is that true for use(promise), and how are its pending and rejected states handled?",
+    "reference_answer": "No. use(promise) is not a Hook and can be called in loops and conditions, though it must be inside a component or Hook [e1][e2]. A pending promise suspends and shows a surrounding Suspense fallback; rejection shows the nearest Error Boundary fallback [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "use(promise) is not a Hook and can be called in loops and conditions.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "use must be called inside a component or Hook.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Pending promises suspend to Suspense fallback; rejected promises go to the nearest Error Boundary.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "use(promise) must always be at the top level like useState.",
+        "correction": "Unlike Hooks, use can be called in conditions and loops.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/use.md",
+        "start_line": 52,
+        "end_line": 52,
+        "quote": "Call `use` with a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) to read its resolved value. The component calling `use` *suspends* while the Promise is pending. Despite its name, `use` is not a Hook. Unlike Hooks, it can be called inside loops and conditional statements like `if`."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/use.md",
+        "start_line": 45,
+        "end_line": 45,
+        "quote": "* `use` must be called inside a Component or a Hook."
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/use.md",
+        "start_line": 62,
+        "end_line": 62,
+        "quote": "If the component that calls `use` is wrapped in a [Suspense](/reference/react/Suspense) boundary, the fallback will be displayed while the Promise is pending. Once the Promise is resolved, the Suspense fallback is replaced by the rendered components using the data returned by `use`. If the Promise is rejected, the fallback of the nearest [Error Boundary](/reference/react/Component#catching-rendering-errors-with-an-error-boundary) will be displayed."
+      }
+    ]
+  },
+  {
+    "id": "react-07",
+    "project": "react",
+    "product": "React",
+    "category": "multi-source",
+    "difficulty": "medium",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "A React component stores fullName derived from firstName and lastName in state and updates it with an Effect. What does React recommend instead, and when is an Effect appropriate?",
+    "reference_answer": "Calculate fullName during rendering instead of keeping redundant state and an Effect [e1]. An immediate state update in an Effect causes an unnecessary extra render pass [e2]. Effects are appropriate for synchronization with external systems [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Calculate the value from existing state during rendering rather than storing redundant state.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "An immediate Effect state update causes unnecessary extra render work.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Effects are for synchronization with external systems.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Derived values should always be copied into state with an Effect.",
+        "correction": "Calculate values derivable from state during rendering.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/learn/you-might-not-need-an-effect.md",
+        "start_line": 63,
+        "end_line": 63,
+        "quote": "**When something can be calculated from the existing props or state, [don't put it in state.](/learn/choosing-the-state-structure#avoid-redundant-state) Instead, calculate it during rendering.** This makes your code faster (you avoid the extra \"cascading\" updates), simpler (you remove some code), and less error-prone (you avoid bugs caused by different state variables getting out of sync with each other). If this approach feels new to you, [Thinking in React](/learn/thinking-in-react#step-3-find-the-minimal-but-complete-representation-of-ui-state) explains what should go into state."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/learn/you-might-not-need-an-effect.md",
+        "start_line": 26,
+        "end_line": 26,
+        "quote": "* **You don't need Effects to transform data for rendering.** For example, let's say you want to filter a list before displaying it. You might feel tempted to write an Effect that updates a state variable when the list changes. However, this is inefficient. When you update the state, React will first call your component functions to calculate what should be on the screen. Then React will [\"commit\"](/learn/render-and-commit) these changes to the DOM, updating the screen. Then React will run your Effects. If your Effect *also* immediately updates the state, this restarts the whole process from scratch! To avoid the unnecessary render passes, transform all the data at the top level of your components. That code will automatically re-run whenever your props or state change."
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useEffect.md",
+        "start_line": 7,
+        "end_line": 7,
+        "quote": "`useEffect` is a React Hook that lets you [synchronize a component with an external system.](/learn/synchronizing-with-effects)"
+      }
+    ]
+  },
+  {
+    "id": "react-08",
+    "project": "react",
+    "product": "React",
+    "category": "api-usage",
+    "difficulty": "medium",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "How does React useActionState handle multiple dispatches, and where must dispatchAction be invoked?",
+    "reference_answer": "The action receives previous state followed by the payload [e1]. Dispatches are queued and executed sequentially, each receiving the previous result [e2]. Dispatch inside an Action, for example using startTransition or an Action prop [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The action receives previous state followed by the dispatch payload.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Multiple dispatches are executed sequentially, passing the previous result as state.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Dispatch must be called inside an Action, such as startTransition or an Action prop.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Multiple dispatches always execute in parallel.",
+        "correction": "React queues and executes them sequentially.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useActionState.md",
+        "start_line": 42,
+        "end_line": 42,
+        "quote": "* `reducerAction`: The function to be called when the Action is triggered. When called, it receives the previous state (initially the `initialState` you provided, then its previous return value) as its first argument, followed by the `actionPayload` passed to `dispatchAction`."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useActionState.md",
+        "start_line": 59,
+        "end_line": 59,
+        "quote": "* React queues and executes multiple calls to `dispatchAction` sequentially. Each call to `reducerAction` receives the result of the previous call."
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useActionState.md",
+        "start_line": 70,
+        "end_line": 70,
+        "quote": "You can wrap it in [`startTransition`](/reference/react/startTransition), or pass it to an [Action prop](/reference/react/useTransition#exposing-action-props-from-components). Calls outside that scope won’t be treated as part of the Transition and [log an error](#async-function-outside-transition) on development mode."
+      }
+    ]
+  },
+  {
+    "id": "react-09",
+    "project": "react",
+    "product": "React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "In React, how should an optimistic state update and an asynchronous final state update be marked when using a Transition, including after await?",
+    "reference_answer": "Call the useOptimistic setter inside an Action [e1]. Currently state setters after await need another startTransition to be marked as Transitions [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "The optimistic setter must be called inside an Action.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "State setters after await require another startTransition to be marked as Transitions.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "All setters after await automatically remain marked as Transition updates.",
+        "correction": "Currently, wrap setters after await in another startTransition.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useOptimistic.md",
+        "start_line": 80,
+        "end_line": 80,
+        "quote": "* The `set` function must be called inside an [Action](reference/react/useTransition#functions-called-in-starttransition-are-called-actions). If you call the setter outside an Action, [React will show a warning](#an-optimistic-state-update-occurred-outside-a-transition-or-action) and the optimistic state will briefly render."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useTransition.md",
+        "start_line": 98,
+        "end_line": 98,
+        "quote": "* `action`: A function that updates some state by calling one or more [`set` functions](/reference/react/useState#setstate). React calls `action` immediately with no parameters and marks all state updates scheduled synchronously during the `action` function call as Transitions. Any async calls that are awaited in the `action` will be included in the Transition, but currently require wrapping any `set` functions after the `await` in an additional `startTransition` (see [Troubleshooting](#react-doesnt-treat-my-state-update-after-await-as-a-transition)). State updates marked as Transitions will be [non-blocking](#perform-non-blocking-updates-with-actions) and [will not display unwanted loading indicators](#preventing-unwanted-loading-indicators)."
+      }
+    ]
+  },
+  {
+    "id": "react-10",
+    "project": "react",
+    "product": "React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "A React app reads a mutable external store during a non-blocking Transition. What snapshot rules apply, and what happens if the store changes before the DOM update?",
+    "reference_answer": "getSnapshot must return the same value while the store is unchanged; React compares using Object.is [e1]. Snapshots must be immutable: cache the last snapshot until the mutable data changes, then return a new immutable snapshot [e2]. During a Transition React checks again before DOM changes and restarts as blocking if the snapshot differs [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Repeated getSnapshot calls return the same value while unchanged, compared using Object.is.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Snapshots are immutable; cache unchanged snapshots and replace when data changes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "React checks again before DOM changes and restarts the Transition update as blocking if the snapshot changed.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A changed external store snapshot is committed as a non-blocking Transition without rechecking.",
+        "correction": "React rechecks and restarts as blocking if the snapshot changed.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "* `getSnapshot`: A function that returns a snapshot of the data in the store that's needed by the component. While the store has not changed, repeated calls to `getSnapshot` must return the same value. If the store changes and the returned value is different (as compared by [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)), React re-renders the component."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 56,
+        "end_line": 56,
+        "quote": "* The store snapshot returned by `getSnapshot` must be immutable. If the underlying store has mutable data, return a new immutable snapshot if the data has changed. Otherwise, return a cached last snapshot."
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 60,
+        "end_line": 60,
+        "quote": "* If the store is mutated during a [non-blocking Transition update](/reference/react/useTransition), React will fall back to performing that update as blocking. Specifically, for every Transition update, React will call `getSnapshot` a second time just before applying changes to the DOM. If it returns a different value than when it was called originally, React will restart the update from scratch, this time applying it as a blocking update, to ensure that every component on screen is reflecting the same version of the store."
+      }
+    ]
+  },
+  {
+    "id": "react-11",
+    "project": "react",
+    "product": "React",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "A React chat component receives roomId and theme. Assume serverUrl is a module-level constant and the service helpers are imported. Repair this code so theme changes do not reconnect, roomId changes still reconnect, and connected notifications read the latest committed theme. Show the corrected component and React imports without suppressing dependency linting.\n\n```jsx\nfunction ChatRoom({ roomId, theme }) {\n  useEffect(() => {\n    const connection = createConnection(serverUrl, roomId);\n    connection.on('connected', () => {\n      showNotification('Connected!', theme);\n    });\n    connection.connect();\n    return () => connection.disconnect();\n  }, [roomId, theme]);\n  return null;\n}\n```",
+    "reference_answer": "Separate the connected notification into an Effect Event, whose callback reads the latest committed theme without making the connection Effect reactive to theme [e1][e2]. Keep roomId reactive and preserve connection setup and cleanup; omit the Effect Event from dependencies [e3][e4].\n\n```jsx\nimport { useEffect, useEffectEvent } from 'react';\n\nfunction ChatRoom({ roomId, theme }) {\n  const onConnected = useEffectEvent(() => {\n    showNotification('Connected!', theme);\n  });\n\n  useEffect(() => {\n    const connection = createConnection(serverUrl, roomId);\n    connection.on('connected', () => {\n      onConnected();\n    });\n    connection.connect();\n    return () => connection.disconnect();\n  }, [roomId]);\n\n  return null;\n}\n```\n\nThis extracts a genuinely non-reactive event, not the room-dependent connection itself. Accept other documented implementations that meet the same lifecycle, freshness, and linting requirements; the exact helper name or code formatting is not required.",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Shows corrected code, including the necessary React imports, that separates the notification from connection reactivity while reading the latest committed theme; useEffectEvent is the reference implementation, not a required spelling for a valid documented alternative.",
+        "weight": 2,
+        "evidence_ids": ["e1", "e2", "e3"]
+      },
+      {
+        "id": "c2",
+        "description": "The connection Effect remains reactive to roomId but not theme, without lint suppression; if using an Effect Event, omit it from the dependency array.",
+        "weight": 1,
+        "evidence_ids": ["e3", "e4"]
+      },
+      {
+        "id": "c3",
+        "description": "Preserves the connected listener, connection setup, and disconnect cleanup so room changes reconnect and removal disconnects.",
+        "weight": 1,
+        "evidence_ids": ["e3"]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Simply delete theme from the dependencies while leaving the notification callback unchanged.",
+        "correction": "That leaves a reactive theme read inside the Effect; extract the notification into an Effect Event so it sees the latest committed theme without reconnecting.",
+        "evidence_ids": ["e1", "e2", "e3"]
+      },
+      {
+        "claim": "Move the entire connection setup into an Effect Event and remove roomId from dependencies.",
+        "correction": "The room-dependent connection must stay reactive; only the connected notification is non-reactive.",
+        "evidence_ids": ["e3"]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useEffectEvent.md",
+        "start_line": 41,
+        "end_line": 41,
+        "quote": "* `callback`: A function containing the logic for your Effect Event. The function can accept any number of arguments and return any value. When you call the returned Effect Event function, the `callback` always accesses the latest committed values from render at the time of the call."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/learn/separating-events-from-effects.md",
+        "start_line": 406,
+        "end_line": 412,
+        "quote": "import { useEffect, useEffectEvent } from 'react';\n\nfunction ChatRoom({ roomId, theme }) {\n  const onConnected = useEffectEvent(() => {\n    showNotification('Connected!', theme);\n  });"
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/learn/separating-events-from-effects.md",
+        "start_line": 420,
+        "end_line": 432,
+        "quote": "function ChatRoom({ roomId, theme }) {\n  const onConnected = useEffectEvent(() => {\n    showNotification('Connected!', theme);\n  });\n\n  useEffect(() => {\n    const connection = createConnection(serverUrl, roomId);\n    connection.on('connected', () => {\n      onConnected();\n    });\n    connection.connect();\n    return () => connection.disconnect();\n  }, [roomId]); // ✅ All dependencies declared"
+      },
+      {
+        "id": "e4",
+        "path": "sources/react/src/content/learn/separating-events-from-effects.md",
+        "start_line": 436,
+        "end_line": 436,
+        "quote": "This solves the problem. Note that you had to *remove* `theme` from the list of your Effect's dependencies, because it's no longer used in the Effect. You also don't need to *add* `onConnected` to it, because **Effect Events are not reactive and must be omitted from dependencies.**"
+      }
+    ]
+  },
+  {
+    "id": "react-12",
+    "project": "react",
+    "product": "React",
+    "category": "constraints",
+    "difficulty": "hard",
+    "version_context": "Official react.dev main-branch documentation snapshot; not a release-pinned checkout.",
+    "question": "For a server-rendered React component subscribing with useSyncExternalStore, what must be provided for hydration, and how should subscription and snapshots behave across renders?",
+    "reference_answer": "Provide getServerSnapshot for server rendering and hydration; its result must match between server and client, and omitting it makes server rendering throw [e1]. subscribe receives a callback and returns cleanup; a different subscribe function causes resubscription [e2][e3]. getSnapshot must return the same value while unchanged, and immutable snapshots should be cached until data changes [e4][e5].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "getServerSnapshot is used for server rendering and hydration; it must match between server and client, and omission causes server rendering to throw.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "subscribe receives a callback and returns a cleanup function.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Changing subscribe identity causes resubscription.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      },
+      {
+        "id": "c4",
+        "description": "getSnapshot returns the same value while the store is unchanged.",
+        "weight": 1,
+        "evidence_ids": [
+          "e4"
+        ]
+      },
+      {
+        "id": "c5",
+        "description": "Snapshots must be immutable, with a new immutable snapshot when underlying mutable data changes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e5"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "getServerSnapshot may be omitted during server rendering.",
+        "correction": "If omitted, server rendering the component throws.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 48,
+        "end_line": 48,
+        "quote": "* **optional** `getServerSnapshot`: A function that returns the initial snapshot of the data in the store. It will be used only during server rendering and during hydration of server-rendered content on the client. The server snapshot must be the same between the client and the server, and is usually serialized and passed from the server to the client. If you omit this argument, rendering the component on the server will throw an error."
+      },
+      {
+        "id": "e2",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 44,
+        "end_line": 44,
+        "quote": "* `subscribe`: A function that takes a single `callback` argument and subscribes it to the store. When the store changes, it should invoke the provided `callback`, which will cause React to re-call `getSnapshot` and (if needed) re-render the component. The `subscribe` function should return a function that cleans up the subscription."
+      },
+      {
+        "id": "e3",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 58,
+        "end_line": 58,
+        "quote": "* If a different `subscribe` function is passed during a re-render, React will re-subscribe to the store using the newly passed `subscribe` function. You can prevent this by declaring `subscribe` outside the component."
+      },
+      {
+        "id": "e4",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "* `getSnapshot`: A function that returns a snapshot of the data in the store that's needed by the component. While the store has not changed, repeated calls to `getSnapshot` must return the same value. If the store changes and the returned value is different (as compared by [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)), React re-renders the component."
+      },
+      {
+        "id": "e5",
+        "path": "sources/react/src/content/reference/react/useSyncExternalStore.md",
+        "start_line": 56,
+        "end_line": 56,
+        "quote": "* The store snapshot returned by `getSnapshot` must be immutable. If the underlying store has mutable data, return a new immutable snapshot if the data has changed. Otherwise, return a cached last snapshot."
+      }
+    ]
+  }
+]

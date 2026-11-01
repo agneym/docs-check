@@ -1,0 +1,166 @@
+---
+title: Introduction
+description: Takumi lays out JSX, HTML, and CSS with one engine and turns the result into images, PDFs, or paint trees, without a browser.
+---
+
+Takumi is one layout engine, with text and inline layout ported from Chromium. It turns JSX, HTML, and CSS into images, PDFs, and other outputs without a headless browser.
+
+## Pick a package
+
+Each package runs the same layout engine. Pick the one that produces your output.
+
+<Cards>
+  <Card
+    title="Images and animations"
+    href="#install"
+    description="takumi-js renders PNG, JPEG, WebP, SVG, and animated WebP, APNG, or GIF. Open Graph images are one use."
+    icon={<Zap />}
+  />
+  <Card
+    title="PDF documents"
+    href="/docs/pdf"
+    description="takumi-pdf writes paged documents such as invoices, reports, and tickets."
+    icon={<BookOpen />}
+  />
+  <Card
+    title="Paint"
+    href="/docs/paint"
+    description="takumi-paint returns every box, text run, and image with its position. Draw them with Canvas, slides, or a native API, or read the layout."
+    icon={<Palette />}
+  />
+</Cards>
+
+The rest of this page uses `takumi-js`.
+
+For how a render goes from input to output, and where it differs from a browser, see [How Takumi works](/docs/concepts).
+
+## Install
+
+```npm
+npm i takumi-js
+```
+
+`takumi-js` ships two backends and picks one at runtime. You install nothing else.
+
+| Runtime                                           | Backend                         |
+| ------------------------------------------------- | ------------------------------- |
+| Node.js, Bun                                      | native (`@takumi-rs/core`)      |
+| Cloudflare Workers, edge runtimes, Deno, browsers | WebAssembly (`@takumi-rs/wasm`) |
+
+## Render an image
+
+`render` takes JSX and returns encoded image bytes. Save this as `image.tsx` and run `bun image.tsx`. In Node.js, compile the JSX first.
+
+```tsx twoslash title="image.tsx"
+import { render } from "takumi-js";
+import { writeFile } from "node:fs/promises";
+
+const png = await render(
+  <div
+    style={{
+      fontSize: 72,
+      background: "linear-gradient(to bottom right, #fff7ed, #fecaca)",
+    }}
+    tw="w-full h-full flex items-center justify-center"
+  >
+    Hello Takumi
+  </div>,
+  { width: 1200, height: 630 }, // [!code highlight]
+);
+
+await writeFile("hello.png", png);
+```
+
+- `width` and `height` set the image size. Leave one out to size that side to the content.
+- `tw="w-full h-full"` makes the root fill the image.
+
+## Serve it over HTTP
+
+[`ImageResponse`](/docs/reference/image-response) extends the web `Response`. Return it from any route handler that uses `Request` and `Response`. Its API matches `next/og`.
+
+```tsx twoslash title="app/og/route.tsx"
+import { ImageResponse } from "takumi-js/response";
+
+export function GET() {
+  return new ImageResponse(<div tw="w-full h-full grid place-items-center">Hello Takumi</div>, {
+    width: 1200,
+    height: 630,
+  });
+}
+```
+
+<Callout type="warning">
+  Takumi never reads system fonts. The only built-in font is Geist, which covers Latin at weights
+  300 to 800. Load fonts for other scripts through `fonts`, or their glyphs go missing. See
+  [Fonts](/docs/fonts).
+</Callout>
+
+## Load a font
+
+`googleFonts` loads Google Fonts families in one request. A weight range or an `axes` entry loads the variable font. Then `font-weight` and `font-variation-settings` set its axes per element.
+
+```tsx twoslash title="Load a variable font"
+import { render } from "takumi-js";
+import { googleFonts } from "takumi-js/helpers";
+
+const png = await render(
+  <div
+    style={{
+      fontSize: 72,
+      fontFamily: "Fraunces",
+      // [!code highlight]
+      fontVariationSettings: "'opsz' 72, 'wght' 700",
+    }}
+    tw="w-full h-full flex items-center justify-center"
+  >
+    Hello Takumi
+  </div>,
+  {
+    width: 1200,
+    height: 630,
+    // [!code highlight:7]
+    fonts: googleFonts([
+      {
+        name: "Fraunces",
+        weight: "100..900",
+        axes: { opsz: "9..144" },
+      },
+    ]),
+  },
+);
+```
+
+`fonts` also takes a font URL, raw bytes, or a descriptor. To load fonts before the first request, [register them on a `Renderer`](/docs/fonts#preloading-with-registerfont).
+
+## Coming from satori
+
+A bare `<div>` lays out as a block, as in a browser. Keep explicit Flexbox styles when you move a Satori template, and compare the output. `renderSvg()` returns SVG like `satori()` does. `render()` returns encoded image bytes. See the [Satori comparison and migration guide](/docs/migration/satori).
+
+## Next steps
+
+<Cards>
+  <Card
+    title="Playground"
+    href="https://takumi.kane.tw/playground"
+    description="Try Takumi in your browser without any setup"
+    icon={<Shovel />}
+  />
+  <Card
+    title="Integration"
+    href="/docs/frameworks"
+    description="Add Takumi to your framework"
+    icon={<ToyBrick />}
+  />
+  <Card
+    title="Styling"
+    href="/docs/styles"
+    description="Inline styles, Tailwind, and full stylesheets"
+    icon={<FileCode2 />}
+  />
+  <Card
+    title="Fonts & text"
+    href="/docs/fonts"
+    description="Load fonts, set fallbacks, and style multilingual text"
+    icon={<Type />}
+  />
+</Cards>

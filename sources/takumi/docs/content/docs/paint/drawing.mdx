@@ -1,0 +1,116 @@
+---
+title: Drawing
+description: Place each node with its transform, replay the paint steps in order, and draw every drawable type on your own canvas.
+---
+
+A renderer reads where each node sits and the order to draw it in.
+
+## Place a node
+
+Each node has a local space from `(0, 0)` to `(width, height)`. Its drawables use that space. `node.transform` maps the space onto the canvas.
+
+Pick a rotation below. The drawables stay the same. Only the transform changes.
+
+<LocalSpace />
+
+`node.bounds` is the node's bounding rectangle on the canvas, so it can change when the node rotates. To apply the transform, call `ctx.setTransform(...node.transform)`, which takes the matrix in the same order.
+
+| Node    | Local space                                |
+| ------- | ------------------------------------------ |
+| `box`   | Its border box                             |
+| `text`  | The border box of the block its lines fill |
+| `image` | Its content box                            |
+
+## Replay the steps
+
+`tree.steps` lists every step, bottom to top. The demo draws the card from [Paint JSX](/docs/paint#paint-jsx) one step at a time.
+
+<StepReplay />
+
+The order already accounts for `z-index`, including negative values. An outline that paints after later siblings has its own `draw` step in the right place.
+
+| Step                        | Do                                                   |
+| --------------------------- | ---------------------------------------------------- |
+| `draw`                      | Draw `drawables` under `node.transform`              |
+| `begin-group` / `end-group` | Draw the steps between them into a layer, then blend |
+| `begin-clip` / `end-clip`   | Clip the steps between them to `clip`, in node space |
+
+This loop replays the steps onto a canvas:
+
+```ts twoslash title="replay.ts"
+import type { Drawable, PaintTree } from "takumi-paint";
+
+declare function draw(ctx: CanvasRenderingContext2D, drawable: Drawable): void;
+declare function newLayer(): CanvasRenderingContext2D;
+
+function replay(ctx: CanvasRenderingContext2D, tree: PaintTree) {
+  const layers: CanvasRenderingContext2D[] = [];
+  let target = ctx;
+
+  for (const step of tree.steps) {
+    switch (step.type) {
+      case "draw":
+        target.setTransform(...step.node.transform); // [!code highlight]
+        for (const drawable of step.drawables) draw(target, drawable); // [!code highlight]
+        break;
+      case "begin-clip":
+        target.save();
+        target.setTransform(...step.node.transform);
+        // Clip to step.clip.
+        break;
+      case "end-clip":
+        target.restore();
+        break;
+      case "begin-group":
+        layers.push(target); // [!code highlight]
+        target = newLayer(); // [!code highlight]
+        break;
+      case "end-group": {
+        const parent = layers.pop() ?? ctx;
+        // Filter, clip, and mask the layer per step.node.effects, then blend it into parent.
+        parent.resetTransform();
+        parent.globalAlpha = step.node.effects?.opacity ?? 1;
+        parent.drawImage(target.canvas, 0, 0); // [!code highlight]
+        parent.globalAlpha = 1;
+        target = parent;
+        break;
+      }
+    }
+  }
+}
+```
+
+<Callout type="warn">
+  A group needs its own layer. Setting `globalAlpha` per draw darkens the spots where draws overlap.
+</Callout>
+
+## Draw a drawable
+
+| Type     | Draw                                                                                                                     |
+| -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `fill`   | Fill `shape` with `paint`, clipped to every shape in `clips`. Blend with `blendMode` when set.                           |
+| `stroke` | Stroke `shape` with `stroke` and `paint`, clipped to every shape in `clips`                                              |
+| `shadow` | Blur a copy of `shape`, filled or stroked with `stroke`, moved by `offset`, visible only `outside` or `inside` its `box` |
+| `glyphs` | Fill the run's outlines with `paint`, moved by `offset` and blurred by `blur`. Stroke them instead when `stroke` is set. |
+| `image`  | Draw `image` into `rect`, clipped to `clip`, sampled per `sampling`                                                      |
+| `masked` | Draw `content` into a layer, keep it only where `mask` covers, then composite it                                         |
+| `group`  | Draw `drawables` into a layer, then composite it at `opacity`                                                            |
+
+A `shadow` or `glyphs` blur is a Gaussian standard deviation, half the CSS blur radius. A `glyphs` drawable with a blur is a text shadow. Every drawable except `group` has a `role`, such as `background`, `border`, or `text`, which exporters use to rebuild editable objects. For example, a slide writer can merge a box's background, border, and shadow into one shape.
+
+## Read paints
+
+Interpolate gradient stops linearly in sRGB. Takumi adds stops wherever the CSS interpolation color space, Oklab by default, would differ. A repeating gradient has `spread: "repeat"` and its stops cover one period, as with SVG's `spreadMethod`. Canvas gradients only pad, so repeat the stops across the area yourself.
+
+Background and mask layers arrive as `pattern` paints. A pattern draws one tile at every `x` and `y` pair, clipped to `area`.
+
+## Apply effects
+
+A box with `effects` composites as a group. Apply them in this order:
+
+1. Render the group's steps into a layer.
+2. Run `filters` over it.
+3. Clip it to `clip`, and multiply it by the alpha of `mask`.
+4. Blend it with `opacity` and `blendMode`.
+
+`backdropFilters` apply to what is already drawn behind the node. They run inside `backdropClip`, the node's border box, before the node draws.

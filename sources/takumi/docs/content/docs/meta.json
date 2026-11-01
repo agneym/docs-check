@@ -1,0 +1,30 @@
+{
+  "title": "Documentation for Takumi",
+  "root": true,
+  "pages": [
+    "---[Rocket]Get started---",
+    "index",
+    "concepts",
+    "frameworks",
+    "---[Shapes]Content---",
+    "styles",
+    "fonts",
+    "typography",
+    "images",
+    "tables",
+    "charts",
+    "effects",
+    "---[Layers]Rendering---",
+    "formats",
+    "animation",
+    "performance",
+    "---[Library]Reference---",
+    "...reference",
+    "---[ArrowRightLeft]Migration---",
+    "...migration",
+    "---[LifeBuoy]Help---",
+    "troubleshooting",
+    "---[LayoutTemplate]Showcase---",
+    "templates"
+  ]
+}

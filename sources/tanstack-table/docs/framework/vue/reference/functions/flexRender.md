@@ -1,0 +1,32 @@
+---
+id: flexRender
+title: flexRender
+---
+
+```ts
+function flexRender(render, props): any;
+```
+
+Defined in: [FlexRender.ts:30](https://github.com/TanStack/table/blob/main/packages/vue-table/src/FlexRender.ts#L30)
+
+If rendering headers, cells, or footers with custom markup, use flexRender instead of `cell.getValue()` or `cell.renderValue()`.
+
+## Parameters
+
+### render
+
+`any`
+
+### props
+
+`any`
+
+## Returns
+
+`any`
+
+## Example
+
+```ts
+flexRender(cell.column.columnDef.cell, cell.getContext())
+```

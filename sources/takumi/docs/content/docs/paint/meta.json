@@ -1,0 +1,14 @@
+{
+  "title": "Paint",
+  "description": "Draw the laid-out boxes, text, and images yourself",
+  "root": true,
+  "icon": "Brush",
+  "pages": [
+    "index",
+    "---[BookOpen]Guides---",
+    "drawing",
+    "text",
+    "---[Library]Reference---",
+    "reference"
+  ]
+}

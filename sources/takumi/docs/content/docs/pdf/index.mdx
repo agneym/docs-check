@@ -1,0 +1,186 @@
+---
+title: Generate PDFs
+description: Install takumi-pdf, render your first PDF from JSX or HTML, and find the guide for your document.
+index: true
+---
+
+`takumi-pdf` is takumi's PDF output, for invoices, reports, and other paged documents. Pass JSX, an HTML string, or a node tree, and style it with CSS or Tailwind. The renderer runs in WebAssembly and does not launch a browser.
+
+It shares one layout engine, a port of Chromium's layout, with [image output](/docs) and the [paint tree](/docs/paint). Each output applies the same layout rules to a template.
+
+## Install
+
+```npm
+npm i takumi-pdf @takumi-rs/helpers
+```
+
+## Render a document
+
+Save this as `invoice.tsx` and run `bun invoice.tsx` to write `invoice.pdf`. On Node.js, compile the JSX first.
+
+```tsx twoslash title="invoice.tsx"
+import { render } from "takumi-pdf";
+import { PageNumber, TotalPages } from "takumi-pdf/primitives";
+import { googleFonts } from "@takumi-rs/helpers";
+import { writeFile } from "node:fs/promises";
+
+const pdf = await render(
+  <main>
+    <h1>Invoice 1042</h1>
+    <p>Total: $1,290</p>
+  </main>,
+  {
+    size: "a4",
+    // [!code highlight]
+    fonts: await googleFonts(["Inter"]),
+    footer: (
+      <div tw="flex w-full justify-center text-[10px] text-gray-500">
+        Page <PageNumber /> of <TotalPages />
+      </div>
+    ),
+  },
+);
+
+await writeFile("invoice.pdf", pdf);
+```
+
+`render()` returns a `Uint8Array`. By default, these hold:
+
+- Content flows across A4 pages with automatic margins.
+- Text stays selectable, and fonts are embedded as subsets.
+- Text inside an SVG image is drawn as outlines, so it cannot be selected.
+
+An HTML string goes through the same parser as `takumi-js`. A `<style>` tag in the string applies only to that render:
+
+```ts twoslash title="Render HTML"
+import { render } from "takumi-pdf";
+
+// [!code highlight:4]
+const pdf = await render(`
+  <style>.total { font-weight: 700 }</style>
+  <div><span class="total">Total: $1,290</span></div>
+`);
+```
+
+Headers, footers, and `measure()` take the same inputs.
+
+## Find your guide
+
+| Task                                           | Guide                                                                                                                                          |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Control page breaks and repeated table headers | [Pagination](/docs/pdf/pagination)                                                                                                             |
+| Add page numbers, headers, and footers         | [Headers & footers](/docs/pdf/headers)                                                                                                         |
+| Load fonts, logos, and photos                  | [Fonts & images](/docs/pdf/assets)                                                                                                             |
+| Add links, a table of contents, or bookmarks   | [Links, outline & metadata](/docs/pdf/links)                                                                                                   |
+| Create a receipt, certificate, or label        | [Single-page PDFs](/docs/pdf/viewport)                                                                                                         |
+| Generate archival or accessible output         | [PDF/A & PDF/UA](/docs/pdf/conformance)                                                                                                        |
+| Embed invoice XML or another file              | [Attachments](/docs/pdf/attachments)                                                                                                           |
+| Build a complete document                      | [Invoices](/docs/pdf/invoices), [Reports & statements](/docs/pdf/reports), [Charts](/docs/pdf/charts), [Tickets & receipts](/docs/pdf/tickets) |
+| Move from Puppeteer or react-pdf               | [From Puppeteer](/docs/pdf/migration/puppeteer), [From react-pdf](/docs/pdf/migration/react-pdf)                                               |
+| Compare takumi-pdf with other tools            | [Comparison](/docs/pdf/comparison)                                                                                                             |
+
+## Page setup
+
+```tsx twoslash title="Set page geometry"
+import type { ReactNode } from "react";
+declare const report: ReactNode;
+// ---cut---
+import { render } from "takumi-pdf";
+
+const pdf = await render(report, {
+  // [!code highlight:3]
+  size: "letter", // a page keyword, or { width, height } in CSS px at 96 dpi
+  landscape: true,
+  margin: { top: 48, right: 32, bottom: 48, left: 32 },
+});
+```
+
+| Option            | Type                                                      | Default  | Description                                                                            |
+| ----------------- | --------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------- |
+| `size`            | a page keyword or `{ width, height }`                     | `"a4"`   | Page size in CSS px at 96 dpi. Keywords ignore case.                                   |
+| `landscape`       | `boolean`                                                 | `false`  | Swaps page width and height, including explicit sizes.                                 |
+| `margin`          | `number`, `"auto"`, or `{ top?, right?, bottom?, left? }` | `"auto"` | Margin in CSS px. A side left out of the object is `"auto"`.                           |
+| `backgroundColor` | CSS color                                                 | unset    | Fills the whole page, margins included, under everything. Viewers show unset as white. |
+
+<Callout type="warn">CSS `@page` rules are not parsed.</Callout>
+
+Each keyword is a portrait paper size:
+
+| Keyword | Size         | Keyword    | Size         |
+| ------- | ------------ | ---------- | ------------ |
+| `"a3"`  | 297 × 420 mm | `"jis-b4"` | 257 × 364 mm |
+| `"a4"`  | 210 × 297 mm | `"jis-b5"` | 182 × 257 mm |
+| `"a5"`  | 148 × 210 mm | `"ledger"` | 11 × 17 in   |
+| `"b4"`  | 250 × 353 mm | `"legal"`  | 8.5 × 14 in  |
+| `"b5"`  | 176 × 250 mm | `"letter"` | 8.5 × 11 in  |
+
+### Automatic margins
+
+| Side        | `"auto"` resolves to                                                     |
+| ----------- | ------------------------------------------------------------------------ |
+| Top, bottom | The header or footer height plus a 20px inset, and at least 37.8px (1cm) |
+| Left, right | 37.8px                                                                   |
+
+On a page one inch or smaller along an axis, automatic margins on that axis are 0. To set a numeric margin that fits a band, see [Sizing the margin](/docs/pdf/headers#sizing-the-margin).
+
+## Reuse a renderer
+
+`render()` and `measure()` share one renderer. Create a `PdfRenderer` to keep a separate font registry:
+
+```tsx twoslash title="Reuse a font registry"
+import type { ReactNode } from "react";
+declare const doc: ReactNode;
+// ---cut---
+import { PdfRenderer } from "takumi-pdf";
+
+// [!code highlight:2]
+const renderer = new PdfRenderer();
+await renderer.registerFont("https://example.com/fonts/Inter-Regular.woff2");
+
+const pdf = await renderer.render(doc);
+```
+
+Replace the example URL with your font file. A font loads once, however many renders list it.
+
+| Method                    | Effect                                                    |
+| ------------------------- | --------------------------------------------------------- |
+| `render(node, options?)`  | Renders to PDF bytes                                      |
+| `measure(node, options?)` | Returns the laid-out size in CSS px                       |
+| `registerFont(font)`      | Registers a font that stays until you remove it           |
+| `unregisterFont(family)`  | Removes every face of a family                            |
+| `clearFonts()`            | Removes every registered font except the bundled fallback |
+| `free()`                  | Releases the renderer's WebAssembly memory                |
+
+`new PdfRenderer({ fontCacheMaxBytes })` caps the decoded fonts that renders' `fonts` lists keep. Past the cap, the least recently used families are released and load again when a render lists them. Fonts from `registerFont()` are never released.
+
+## Runtimes
+
+Use the default import on Node.js, Bun, and Cloudflare Workers. For manual initialization, import `takumi-pdf/no-init`.
+
+### Next.js
+
+Import `takumi-pdf/next` in a Next.js route handler. It works on the Node and Edge runtimes without a `serverExternalPackages` entry.
+
+```ts title="app/api/pdf/route.ts"
+import { render } from "takumi-pdf/next";
+```
+
+### In the browser
+
+In a browser bundle, initialize the renderer with `takumi-pdf/no-init` and `takumi-pdf/wasm-url`:
+
+```ts title="Initialize in the browser"
+import init, { render } from "takumi-pdf/no-init";
+import wasmUrl from "takumi-pdf/wasm-url";
+
+await init({ module_or_path: wasmUrl });
+```
+
+`takumi-pdf/wasm-url` resolves the binary with `new URL(specifier, import.meta.url)`, and Vite, webpack, and Turbopack rewrite that call to the asset they emit. The module has no top-level `await`, so it also works in a worker bundled as an IIFE.
+
+<Callout type="warn">
+  Keep the default entry in server code. A Vite SSR build leaves the URL pointing at the server
+  chunk, where the asset is not emitted.
+</Callout>
+
+On Turbopack, remove any `turbopack.rules` entry that maps `*.wasm` to `type: "wasm"`. That rule makes Turbopack instantiate the binary and look for wasm-bindgen glue the package does not ship.

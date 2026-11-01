@@ -1,0 +1,708 @@
+[
+  {
+    "id": "takumi-01",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "What fonts are available by default in Takumi, and what should I do for non-Latin text?",
+    "reference_answer": "Takumi does not read system fonts. Its built-in Geist covers Latin at weights 300–800 and is last in the fallback chain [e1]. Load fonts covering each script you use [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "State system fonts are not read and built-in Geist covers Latin weights 300–800, last in fallback.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Load a font for every script used.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Takumi automatically uses system fonts.",
+        "correction": "System fonts are never read.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/fonts.mdx",
+        "start_line": 9,
+        "end_line": 10,
+        "quote": "Takumi never reads system fonts. The only built-in font is Geist, which covers Latin at weights\n  300 to 800 and comes last in every fallback chain.",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/fonts.mdx",
+        "start_line": 6,
+        "end_line": 6,
+        "quote": "Load a font for every script your text uses.",
+        "id": "e2"
+      }
+    ]
+  },
+  {
+    "id": "takumi-02",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "defaults",
+    "difficulty": "easy",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "In Takumi image rendering, what format is the default, and how does WebP choose lossless versus lossy output?",
+    "reference_answer": "PNG is the default. WebP is lossless unless quality is set; lossless: true wins [e1]. On WebAssembly WebP is always lossless, and quality and lossless have no effect on it [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Identify PNG as default and explain WebP quality and lossless precedence.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Identify the WebAssembly WebP exception.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "WebP is always lossy.",
+        "correction": "WebP defaults to lossless.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 23,
+        "end_line": 25,
+        "quote": "| `png` (default) | Yes   | No        | No         | Lossless. Use it for transparency or exact pixels.                 |\n| `jpeg`          | No    | Yes       | No         | Lossy. Draw an opaque background, since JPEG has no alpha channel. |\n| `webp`          | Yes   | Yes       | Yes        | Lossless unless you set `quality`. `lossless: true` wins.          |",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 32,
+        "end_line": 33,
+        "quote": "On the WebAssembly backend, WebP is always lossless. `quality` and `lossless` are accepted but\n  have no effect on WebP.",
+        "id": "e2"
+      }
+    ]
+  },
+  {
+    "id": "takumi-03",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "api-usage",
+    "difficulty": "easy",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "How do I render a Takumi template directly as either an SVG string or encoded raster bytes?",
+    "reference_answer": "Use await renderSvg(template, options) for an SVG document string [e1]; use await render(template, options) for encoded raster bytes [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Use renderSvg for an SVG document string.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Use render for encoded image bytes.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "renderSvg returns raster bytes.",
+        "correction": "It returns an SVG document string.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 84,
+        "end_line": 84,
+        "quote": "`renderSvg()` returns an SVG document string instead of a bitmap.",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 6,
+        "end_line": 6,
+        "quote": "`render()` returns encoded bytes, and the `format` option chooses the encoder.",
+        "id": "e2"
+      }
+    ]
+  },
+  {
+    "id": "takumi-04",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "debugging",
+    "difficulty": "easy",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "A Takumi image layout looks wrong. What option can help inspect its node boxes, and what does it do?",
+    "reference_answer": "Set `drawDebugBorder: true` in the render options [e1]; it outlines every node [e1].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Set drawDebugBorder to true in the render options.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "It outlines every node.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "It outlines only the root node.",
+        "correction": "It outlines every node.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/troubleshooting.mdx",
+        "start_line": 194,
+        "end_line": 205,
+        "quote": "Set `drawDebugBorder` to outline every node:\n\n```tsx title=\"Outline every node\"\nimport { ImageResponse } from \"takumi-js/response\";\n\nexport function GET() {\n  return new ImageResponse(<div tw=\"flex w-full h-full p-8\">Hello</div>, {\n    width: 1200,\n    height: 630,\n    drawDebugBorder: true,\n  });\n}",
+        "id": "e1"
+      }
+    ]
+  },
+  {
+    "id": "takumi-05",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "false-premise",
+    "difficulty": "medium",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "Takumi automatically applies Tailwind Preflight to its built-in tw parser, so headings have no default margin. How can I keep that automatic reset?",
+    "reference_answer": "The premise is false: Preflight is not applied by default, and an h1 retains a 0.67em top margin [e1]. Enable it with css: `@import \"tailwindcss\";` [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Correct the premise: no default Preflight and h1 retains its default margin.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Enable Preflight using the Tailwind import in css.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Preflight is already active for tw.",
+        "correction": "It is off by default.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 199,
+        "end_line": 199,
+        "quote": "The built-in parser applies no Tailwind Preflight by default. Elements keep their default margins, so an `<h1>` gets a `0.67em` top margin until you add `mt-0`.",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 221,
+        "end_line": 221,
+        "quote": "css: `@import \"tailwindcss\";`,",
+        "id": "e2"
+      }
+    ]
+  },
+  {
+    "id": "takumi-06",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "migration",
+    "difficulty": "medium",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "When migrating Takumi v1 to v2, how should JavaScript code handle render calls and reusable fonts?",
+    "reference_answer": "Await top-level render, renderSvg and renderAnimation, which now return promises; Renderer methods are async too [e1]. Pass fonts per render, or await registerFont on a reused renderer to preload them before rendering [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Await top-level render functions and Renderer methods.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Pass fonts per render or await registerFont to preload fonts on a reused renderer before rendering.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Top-level render remains synchronous in v2.",
+        "correction": "It returns a promise and must be awaited.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/migration/v2.mdx",
+        "start_line": 22,
+        "end_line": 22,
+        "quote": "The top-level `takumi-js` functions `render`, `renderSvg`, and `renderAnimation` load fonts and images before they render, so they return promises. `await` them. The [napi](https://www.npmjs.com/package/@takumi-rs/core) and [WebAssembly](https://www.npmjs.com/package/@takumi-rs/wasm) `Renderer` methods are async too.",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/migration/v2.mdx",
+        "start_line": 43,
+        "end_line": 55,
+        "quote": "Pass `fonts` with each render for most uses. Use `registerFont` to preload fonts on a renderer you reuse.\n\n```ts title=\"Pass fonts per render\"\nrenderer.loadFonts([archivo, geist]); // [!code --]\nrenderer.render(node, { fonts: [archivo, geist] }); // [!code ++]\n```\n\nTo preload a font once and reuse it across many renders, call `registerFont`, which replaces all three loaders. It takes raw bytes or a `{ name, data, weight, style }` descriptor, and resolves to the families it registered.\n\n```ts title=\"Replace loadFonts with registerFont\"\nrenderer.loadFonts([archivo, geist]); // [!code --]\nawait renderer.registerFont(archivo); // [!code ++]\nawait renderer.registerFont(geist); // [!code ++]",
+        "id": "e2"
+      }
+    ]
+  },
+  {
+    "id": "takumi-07",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "defaults",
+    "difficulty": "medium",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "How does Takumi devicePixelRatio affect the output image dimensions and CSS layout? How do I double the resolution of a 1200 by 630 design?",
+    "reference_answer": "Width and height remain output pixels; devicePixelRatio sets image pixels per CSS pixel [e1]. Use 2400 by 1260 with ratio 2 for the same layout at double resolution [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Explain dimensions remain output pixels while ratio scales CSS pixels.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Specify 2400 × 1260 and ratio 2 for equivalent 1200 × 630 layout.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Setting ratio 2 doubles the output dimensions automatically.",
+        "correction": "Width and height stay the output pixel dimensions.",
+        "evidence_ids": [
+          "e1"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 42,
+        "end_line": 42,
+        "quote": "`devicePixelRatio` sets how many image pixels each CSS pixel takes. `width` and `height` stay the image size in pixels.",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/formats.mdx",
+        "start_line": 54,
+        "end_line": 54,
+        "quote": "The result is a 2400 × 1260 image. Every CSS length draws twice as large, so the layout matches a 1200 × 630 render at ratio `1`.",
+        "id": "e2"
+      }
+    ]
+  },
+  {
+    "id": "takumi-08",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "constraints",
+    "difficulty": "medium",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "How does Takumi handle an unknown style object property versus a supported property with an invalid value?",
+    "reference_answer": "An unsupported property name is silently dropped [e1]. A supported name whose value cannot be parsed fails the entire style object [e2].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "An unsupported property name is silently dropped.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "An unparsable value for a supported property fails the whole style object.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Invalid values are always silently ignored.",
+        "correction": "An unparsable value for a listed property fails the style object.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/concepts.mdx",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "A property name outside the supported list is dropped without an error.",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/concepts.mdx",
+        "start_line": 46,
+        "end_line": 46,
+        "quote": "A listed name with an unparsable value fails the whole style object.",
+        "id": "e2"
+      }
+    ]
+  },
+  {
+    "id": "takumi-09",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "Using Takumi's native Node.js backend in a Next.js App Router endpoint, write a GET handler returning a 1200 by 630 PNG containing Hello. If rendering fails, return a plain-text HTTP 503 instead of a broken image stream. Include the required native-binding bundler configuration.",
+    "reference_answer": "Use ImageResponse from takumi-js/response in a Node.js App Router handler, and externalize @takumi-rs/core because its native .node addon cannot be bundled [e1][e2]. Use app/og/route.ts with an HTML string (which Takumi accepts [e1]) to follow Next.js's documented route.js|ts convention without JSX in a .ts file. Set the dimensions and select PNG explicitly, or rely on its PNG default [e3]. Await response.ready before returning the image; it rejects on render failure, allowing a different Response to be returned before the image response is committed [e4].\n\n```ts\n// app/og/route.ts\nimport { ImageResponse } from 'takumi-js/response';\n\nexport async function GET() {\n  try {\n    const response = new ImageResponse('<div>Hello</div>', {\n      width: 1200,\n      height: 630,\n      format: 'png',\n    });\n    await response.ready;\n    return response;\n  } catch {\n    return new Response('Failed to generate image', {\n      status: 503,\n      headers: { 'Content-Type': 'text/plain; charset=utf-8' },\n    });\n  }\n}\n```\n\n```ts\n// next.config.ts\nimport type { NextConfig } from 'next';\n\nconst config: NextConfig = {\n  serverExternalPackages: ['@takumi-rs/core'],\n};\n\nexport default config;\n```\n\nonError is only a side-effect hook: its return value is ignored and it does not replace the failed stream [e5]. The 503 status and text are the requested adaptation of the documented fallback Response pattern.",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Shows an App Router GET handler using ImageResponse from takumi-js/response to render Hello at width 1200 and height 630 as PNG, explicitly or via the PNG default, in the requested Node.js environment.",
+        "weight": 1,
+        "evidence_ids": ["e1", "e3"]
+      },
+      {
+        "id": "c2",
+        "description": "Awaits response.ready before returning the image and catches rendering failure before committing the response, rather than relying on onError to return a fallback.",
+        "weight": 2,
+        "evidence_ids": ["e4", "e5"]
+      },
+      {
+        "id": "c3",
+        "description": "Returns a separate plain-text Response with HTTP status 503 on failure; an explicit text/plain header or the standard string-Response behavior is acceptable.",
+        "weight": 1,
+        "evidence_ids": ["e4"]
+      },
+      {
+        "id": "c4",
+        "description": "Includes serverExternalPackages: ['@takumi-rs/core'] in Next.js configuration to keep the native addon out of the bundle.",
+        "weight": 1,
+        "evidence_ids": ["e2"]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "Return a new Response with status 503 from ImageResponse's onError callback.",
+        "correction": "Takumi ignores onError's return value and the image stream still errors; await ready and catch the failure before returning a response.",
+        "evidence_ids": ["e4", "e5"]
+      },
+      {
+        "claim": "A try/catch around returning new ImageResponse is enough to catch later asynchronous rendering failures.",
+        "correction": "The response streams while rendering; await response.ready inside the try/catch before returning it.",
+        "evidence_ids": ["e4"]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "path": "sources/takumi/docs/content/docs/reference/image-response.mdx",
+        "start_line": 9,
+        "end_line": 16,
+        "quote": "import { ImageResponse } from \"takumi-js/response\";\n\nexport function GET() {\n  return new ImageResponse(<div>Hello Takumi</div>, { width: 1200, height: 630 });\n}\n```\n\nThe first argument takes what `render()` takes: JSX, an HTML string, or a node tree."
+      },
+      {
+        "id": "e2",
+        "path": "sources/takumi/docs/content/docs/frameworks/nextjs.mdx",
+        "start_line": 20,
+        "end_line": 30,
+        "quote": "Add `@takumi-rs/core` to `serverExternalPackages`. It holds a native `.node` addon, which Next.js cannot bundle."
+      },
+      {
+        "id": "e3",
+        "path": "sources/takumi/docs/content/docs/reference/image-response.mdx",
+        "start_line": 32,
+        "end_line": 36,
+        "quote": "format: {\n      type: '\"png\" | \"jpeg\" | \"webp\" | \"ico\" | \"raw\"',\n      default: '\"png\"',\n      description: \"Output encoder. Also sets the default content-type.\","
+      },
+      {
+        "id": "e4",
+        "path": "sources/takumi/docs/content/docs/reference/image-response.mdx",
+        "start_line": 125,
+        "end_line": 134,
+        "quote": "export async function GET() {\n  const response = new ImageResponse(<div>Hello Takumi</div>, { width: 1200, height: 630 });\n\n  try {\n    await response.ready; // [!code highlight]\n    return response;\n  } catch {\n    return new Response(\"Failed to generate image\", { status: 500 });\n  }\n}"
+      },
+      {
+        "id": "e5",
+        "path": "sources/takumi/docs/content/docs/reference/image-response.mdx",
+        "start_line": 137,
+        "end_line": 137,
+        "quote": "`onError` is for side effects such as logging. Takumi ignores its return value, and the response stream still errors. Use `ready` to send a fallback."
+      }
+    ]
+  },
+  {
+    "id": "takumi-10",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "A Takumi v1 template uses an absolutely positioned badge and Tailwind border-l-2 border-dashed. What v2 changes could alter the result without Preflight, and how do I fix them?",
+    "reference_answer": "v2 defaults position to static, so explicitly set position: relative on the intended containing block [e1]. Without Preflight, border-dashed sets all sides and unset widths are medium: the left is 2px and other sides 3px. Preflight’s border: 0 solid reset removes the extra borders [e2]; enable it through the Tailwind import [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Set position relative on the intended containing block because v2 defaults to static.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Explain border-dashed draws 2px left and 3px other borders without Preflight.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Enable Preflight with the Tailwind import.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "border-l-2 border-dashed only paints the left edge without Preflight.",
+        "correction": "The other edges are 3px.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/migration/v2.mdx",
+        "start_line": 187,
+        "end_line": 187,
+        "quote": "`position` now defaults to `static`, not `relative`. An element establishes a containing block for absolutely positioned descendants, and honors `top`/`right`/`bottom`/`left` insets, only when you opt in. Set `position: relative` where you relied on the old default.",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 206,
+        "end_line": 209,
+        "quote": "Without Preflight, a border style utility draws on every side. `border-dashed` sets `border-style`\n  on all four sides, and an unset border width is `medium`. So `border-l-2 border-dashed` draws a\n  2px left border and 3px borders on the other sides. Preflight's `border: 0 solid` reset removes\n  them.",
+        "id": "e2"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 221,
+        "end_line": 221,
+        "quote": "css: `@import \"tailwindcss\";`,",
+        "id": "e3"
+      }
+    ]
+  },
+  {
+    "id": "takumi-11",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "For a Takumi template rendered both as an image and as a PDF, how do screen and print media queries behave, what happens with unlisted media features such as prefers-color-scheme, and how should I handle PDF blur filters?",
+    "reference_answer": "Image renders use screen and PDF renders use print [e1]. Unlisted media features including prefers-color-scheme match nothing, but the remaining stylesheet applies [e2]. PDF cannot draw filter blur or drop-shadow and stops; remove the filter or rasterize the subtree as an img [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Distinguish screen image renders from print PDF renders.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Unlisted media features including prefers-color-scheme match nothing; remaining styles apply.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Explain PDF blur/drop-shadow failure and remove filter or rasterize subtree as img.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "PDF renders silently ignore blur.",
+        "correction": "The renderer stops instead.",
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 72,
+        "end_line": 72,
+        "quote": "| `screen`, `print`, `all` | the media type: image renders are `screen`, PDF renders are `print` |",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/styles.mdx",
+        "start_line": 77,
+        "end_line": 78,
+        "quote": "Any other feature, `prefers-color-scheme` included, matches nothing. The rest of the stylesheet\n  still applies.",
+        "id": "e2"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/troubleshooting.mdx",
+        "start_line": 170,
+        "end_line": 170,
+        "quote": "Remove the filter, or rasterize that subtree yourself and place it as an `<img>`. PDF has no blur operator, so `filter: blur()` and `drop-shadow()` cannot be drawn. The renderer stops rather than ship a page that differs from the image output.",
+        "id": "e3"
+      }
+    ]
+  },
+  {
+    "id": "takumi-12",
+    "project": "takumi",
+    "product": "Takumi",
+    "category": "multi-source",
+    "difficulty": "hard",
+    "version_context": "Official Takumi master-branch documentation snapshot; not release-pinned.",
+    "question": "A Takumi server renders untrusted image URLs and shares a byte cache. How should I restrict requests safely, and what happens when an image fetch fails?",
+    "reference_answer": "Set images.allowUrl for user-controlled markup [e1]. It checks redirect destinations, but a fetchCache hit checks only the requested URL, so do not share a cache across URL policies; use custom fetch to filter resolved IPs [e2]. By default a failed fetch rejects the render; images.throwOnError: false omits that image and draws the rest [e3].",
+    "criteria": [
+      {
+        "id": "c1",
+        "description": "Set allowUrl for user-controlled markup.",
+        "weight": 1,
+        "evidence_ids": [
+          "e1"
+        ]
+      },
+      {
+        "id": "c2",
+        "description": "Explain redirect checks, cache-hit limitation, no cross-policy cache sharing, and custom fetch for IP filtering.",
+        "weight": 1,
+        "evidence_ids": [
+          "e2"
+        ]
+      },
+      {
+        "id": "c3",
+        "description": "Default failed image rejects render; throwOnError false omits it.",
+        "weight": 1,
+        "evidence_ids": [
+          "e3"
+        ]
+      }
+    ],
+    "common_mistakes": [
+      {
+        "claim": "A shared cache rechecks every cached redirect against each new policy.",
+        "correction": "Cache hits check only the requested URL.",
+        "evidence_ids": [
+          "e2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "path": "sources/takumi/docs/content/docs/images.mdx",
+        "start_line": 251,
+        "end_line": 252,
+        "quote": "Takumi fetches these URLs from your server. Set `allowUrl` whenever user input can reach the\n  markup.",
+        "id": "e1"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/images.mdx",
+        "start_line": 255,
+        "end_line": 257,
+        "quote": "- `allowUrl` checks each redirect destination, up to five hops. Each hop shares the same deadline and gets its own attempts.\n- A `fetchCache` hit checks only the requested URL, because cached bytes keep no redirect history. Do not share one `fetchCache` across different URL policies.\n- `allowUrl` sees URLs, not IP addresses. To filter by resolved address, pass a custom `fetch`.",
+        "id": "e2"
+      },
+      {
+        "path": "sources/takumi/docs/content/docs/images.mdx",
+        "start_line": 234,
+        "end_line": 234,
+        "quote": "By default, one image that fails to fetch rejects the whole render. Set `throwOnError: false` to leave that image out and draw the rest.",
+        "id": "e3"
+      }
+    ]
+  }
+]

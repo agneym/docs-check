@@ -1,0 +1,75 @@
+---
+title: Tables
+description: Lay out HTML tables with Takumi, size their columns, and know where the result differs from Chromium.
+---
+
+Takumi lays out tables with a port of [Chromium's table layout](https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/layout/table/). Column widths, row heights, and collapsed borders follow Chromium.
+
+```tsx twoslash title="Set a table column width"
+<table style={{ width: "100%" }}>
+  <thead>
+    <tr style={{ background: "#e2e8f0" }}>
+      <th>Name</th>
+      {/* [!code highlight] */}
+      <th style={{ width: "80px" }}>Qty</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Wireframe kit</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+## Elements
+
+- `<table>`, `<caption>`, `<colgroup>`, `<col>`, `<thead>`, `<tbody>`, `<tfoot>`, `<tr>`, `<td>`, and `<th>` have presets in HTML and JSX.
+- Header groups render first. Footer groups render last.
+- `caption` renders above the table. `caption-side: bottom` moves it below.
+- `display: inline-table` sits on a line. Its first row's baseline aligns with the text.
+
+## Columns and spans
+
+- `colspan` and `rowspan` work on `<td>` and `<th>`. The JSX props are `colSpan` and `rowSpan`.
+- A `rowspan` stops at the end of its row group.
+- `<col>` and `<colgroup>` widths size their columns. `span` covers several columns.
+- Columns share the table's width by their content.
+- `table-layout: fixed` reads column widths from the first row. It needs a table `width`.
+- `visibility: collapse` removes a row or a column, and its space.
+- `direction: rtl` starts the first column on the right.
+
+## Sizing
+
+- An `auto`-width table shrinks to fit its content.
+- In a flex or grid container, an `auto`-width table stretches.
+- In automatic layout, a table is never narrower than its content's minimum width.
+- With `table-layout: fixed` and a `width`, content can overflow its cell instead.
+
+## Borders and backgrounds
+
+- `border-spacing` puts gaps between cells. The gaps stay unpainted.
+- `border-collapse: collapse` merges shared borders as Chromium does. The wider border wins.
+- Row, row group, column, and column group backgrounds paint inside their cells.
+- With separate borders, `empty-cells: hide` hides empty cells.
+
+## Alignment
+
+- `vertical-align` places cell content as Chromium does.
+- `baseline` cells line up their first lines across a row.
+
+## PDF pages
+
+- Rows split across pages.
+- Header and footer groups with `break-inside: avoid` repeat on every page. The presets set it.
+- Columns keep the same positions on every page.
+
+## Where it drifts
+
+| Case                                                      | Chromium                        | Takumi                                             |
+| :-------------------------------------------------------- | :------------------------------ | :------------------------------------------------- |
+| Row baseline, with percentage-height content in a cell    | Measured after the row grows    | Measured before the row grows                      |
+| `content-box` background on a vertically aligned cell     | Stays at the cell's padding     | Moves with the content                             |
+| Background image on a row or column under a spanning cell | Positioned on the row or column | Positioned on the row or column, grown to the cell |
+| Page breaks                                               | Fragments the table in layout   | Cuts the finished table into pages                 |

@@ -1,0 +1,5 @@
+{
+  "defaultOpen": true,
+  "icon": "ToyBrick",
+  "pages": ["nextjs", "fumapress", "nuxt", "sveltekit", "tanstack-start", "nitro", "astro"]
+}
