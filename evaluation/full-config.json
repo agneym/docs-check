@@ -1,0 +1,27 @@
+{
+  "phase": "full-first-pass",
+  "question_count": 48,
+  "workflows": ["parallel", "context7"],
+  "repeats": 1,
+  "planned_workflow_executions": 96,
+  "answering_model": {"provider": "openai-codex", "id": "gpt-6.1-terra", "reasoning_effort": "medium"},
+  "parallel": {"transport": "direct-task-api", "processor": "core-fast", "task_spec_path": "evaluation/parallel-task-spec.json"},
+  "settings": {
+    "retrieval_ms": 300000,
+    "answer_ms": 60000,
+    "total_ms": 360000,
+    "evidence_proxy_tokens": 12000,
+    "output_proxy_tokens": 4096,
+    "safe_operation_retries": 1,
+    "poll_ms": 5000,
+    "concurrency": 1,
+    "context7_max_resolutions": 2,
+    "context7_max_queries": 4,
+    "client_cache": false
+  },
+  "schedule": {"seed": 20261101, "algorithm": "sha256-counter-fisher-yates-v1", "paired": true, "first_slots_each": 24},
+  "judging": {"type": "two-independent-human-reviewers", "seed": 612024, "bootstrap_seed": 9102026, "bootstrap_samples": 10000, "decision_margin": null},
+  "spending": {"policy": "pending-full-run-authorization", "cap": null, "currency": null, "automatic_topups": false},
+  "authorization": {"full_run_approved": false, "extra_executions_approved": false},
+  "pilot_question_ids": ["nextjs-02", "tanstack-06"]
+}

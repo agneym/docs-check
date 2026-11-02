@@ -58,8 +58,8 @@ The failure was preserved, reproduced with a synthetic fixture, and fixed by dec
 
 ## Artifacts and reproducibility
 
-- **Corrected campaign:** `/home/agney/random/docs-check-runs/2026-11-01T18-18-38-840Z-9cb372/`
-- **Earlier setup failure:** `/home/agney/random/docs-check-runs/2026-11-01T18-15-51-731Z-7a89b3/`
+- **Corrected campaign:** `~/random/docs-check-runs/2026-11-01T18-18-38-840Z-9cb372/`
+- **Earlier setup failure:** `~/random/docs-check-runs/2026-11-01T18-15-51-731Z-7a89b3/`
 - Corrected campaign contains `manifest.json`, `schedule.jsonl`, `model.json`, per-execution inputs/audits/raw outputs/evidence/answers/timing/usage, `leakage-audit.json`, blinded judge packets/map/results, independent citation caches, adjudications, and `results.json`.
 - Frozen source/input copies were archived after verifying their hashes still matched the pre-run manifest. The manifest records image metadata, QEMU binary hash, prompts, model metadata, input/code hashes, and the explicit pilot limitations.
 - Runner/setup documentation: [`../scripts/pilot/README.md`](../scripts/pilot/README.md). Eight local runner tests and eleven dataset compiler tests pass.
